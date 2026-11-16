@@ -10,6 +10,8 @@
         body { font-family: 'M PLUS Rounded 1p', sans-serif; background-color: #FAF7F2; color: #4A3B32; }
         .tab-active { background-color: #6E5750 !important; color: white !important; }
         .filter-btn-active { background-color: #6E5750 !important; color: white !important; }
+        .mini-cal-day { min-height: 54px; cursor: pointer; transition: all 0.15s; }
+        .mini-cal-day:hover { background-color: #F5F0EB; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-thumb { background: #D5C5B9; border-radius: 3px; }
     </style>
@@ -27,42 +29,19 @@
     <!-- ナビゲーションタブ -->
     <nav class="max-w-5xl mx-auto px-4 mt-6">
         <div class="flex overflow-x-auto gap-2 bg-[#EFECE6] p-2 rounded-2xl shadow-inner">
-            <button onclick="switchTab('money')" id="btn-money" class="tab-btn tab-active px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap">💰 家計簿 ＆ バイト給料</button>
-            <button onclick="switchTab('tasks')" id="btn-tasks" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">📝 課題一覧</button>
-            <button onclick="switchTab('goods')" id="btn-goods" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎀 グッズ管理</button>
-            <button onclick="switchTab('gacha')" id="btn-gacha" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎰 ガチャ・買い物</button>
+            <button type="button" onclick="switchTab('money')" id="btn-money" class="tab-btn tab-active px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap">💰 家計簿</button>
+            <button type="button" onclick="switchTab('shift')" id="btn-shift" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">💼 バイト給料</button>
+            <button type="button" onclick="switchTab('tasks')" id="btn-tasks" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">📝 課題一覧</button>
+            <button type="button" onclick="switchTab('goods')" id="btn-goods" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎀 グッズ管理</button>
+            <button type="button" onclick="switchTab('gacha')" id="btn-gacha" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎰 ガチャ・買い物</button>
         </div>
     </nav>
 
     <!-- メインコンテンツ -->
     <main class="max-w-5xl mx-auto px-4 mt-6">
 
-        <!-- ================= 1. 家計簿 ＆ バイト給料 ================= -->
+        <!-- ================= 1. 家計簿 ================= -->
         <div id="tab-money" class="tab-content space-y-6">
-            
-            <!-- バイト給料 ＆ 稼ぎ確認エリア -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6] flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <h3 class="text-lg font-bold text-[#6E5750]">💼 今月のバイト給料・シフト管理</h3>
-                    <p class="text-xs text-gray-500 mt-1">下のボタンからシフトを入れると、給料の見込み額が自動で計算されます！</p>
-                </div>
-                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                    <button onclick="openScheduleModal()" class="bg-[#6E5750] text-white font-bold px-4 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm">
-                        ✨ ＋ バイトシフト追加
-                    </button>
-                    <div class="text-right bg-[#FAF7F2] p-3 rounded-2xl">
-                        <span class="text-xs text-gray-500 block">今月の給料見込み:</span>
-                        <span class="text-xl font-extrabold text-[#6E5750]" id="total-wage-display">¥ 0</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 登録されたバイトシフト一覧 -->
-            <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h3 class="text-md font-bold text-[#6E5750] mb-4">📅 登録したバイトシフト一覧</h3>
-                <div id="schedule-list" class="space-y-3"></div>
-            </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- メイン口座 ＆ 週予算 -->
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6] space-y-4">
@@ -119,7 +98,7 @@
             <!-- 支出追加ボタン -->
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
                 <h3 class="font-bold text-[#6E5750]">💸 家計簿の記録</h3>
-                <button onclick="openMoneyModal()" class="bg-[#6E5750] text-white font-bold px-5 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm flex items-center gap-2">
+                <button type="button" onclick="openMoneyModal()" class="bg-[#6E5750] text-white font-bold px-5 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm flex items-center gap-2">
                     <span>✨ ＋ 支出・収入を記録する</span>
                 </button>
             </div>
@@ -151,12 +130,59 @@
             </div>
         </div>
 
+        <!-- ================= 2. バイト給料（コンパクトカレンダー方式） ================= -->
+        <div id="tab-shift" class="tab-content hidden space-y-6">
+            
+            <!-- 給料サマリー ＆ シフト追加ボタン -->
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-center sm:text-left">
+                    <span class="text-xs font-bold text-[#8C736A] block" id="shift-month-wage-label">今月のバイト給料見込み</span>
+                    <span class="text-2xl font-extrabold text-[#6E5750]" id="total-wage-display">¥ 0</span>
+                </div>
+                <button type="button" onclick="openScheduleModal()" class="w-full sm:w-auto bg-[#6E5750] text-white font-bold px-5 py-3 rounded-2xl hover:bg-[#58443E] transition shadow text-sm">
+                    ✨ ＋ バイトシフトを追加
+                </button>
+            </div>
+
+            <!-- 小さめシフトカレンダー -->
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] max-w-xl mx-auto">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-base font-bold text-[#6E5750]" id="shift-cal-title">📅 カレンダー</h3>
+                    <div class="flex gap-1.5">
+                        <button type="button" onclick="changeShiftMonth(-1)" class="px-2.5 py-1 bg-[#F5F0EB] rounded-lg text-xs font-bold text-[#6E5750]">◀ 前月</button>
+                        <button type="button" onclick="changeShiftMonth(1)" class="px-2.5 py-1 bg-[#F5F0EB] rounded-lg text-xs font-bold text-[#6E5750]">次月 ▶</button>
+                    </div>
+                </div>
+
+                <div class="flex gap-3 text-[11px] font-bold mb-2 justify-end">
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-red-400 inline-block"></span>セリア</span>
+                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-blue-400 inline-block"></span>児童館</span>
+                </div>
+
+                <div class="grid grid-cols-7 gap-1 text-center font-bold text-[11px] text-[#8C736A] mb-1">
+                    <div class="text-red-500">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="text-blue-500">土</div>
+                </div>
+                <div id="shift-calendar-grid" class="grid grid-cols-7 gap-1"></div>
+
+                <!-- 選択した日のシフト詳細表示エリア -->
+                <div class="mt-4 pt-4 border-t border-[#EFECE6]">
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="text-xs font-bold text-[#8C736A]" id="selected-shift-date-label">📌 日付をタップして詳細を確認</h4>
+                        <button type="button" onclick="openScheduleModalWithDate()" id="btn-add-selected-date" class="hidden text-xs bg-[#EFECE6] text-[#6E5750] font-bold px-2.5 py-1 rounded-lg hover:bg-[#E2DCD2]">＋ この日に追加</button>
+                    </div>
+                    <div id="selected-day-shifts" class="space-y-2">
+                        <p class="text-xs text-gray-400 text-center py-2">カレンダーの日付をタップするとシフトが見れます</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ================= バイトシフト追加モーダル ================= -->
         <div id="schedule-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
             <div class="bg-white p-6 rounded-3xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-4 border border-[#EFECE6]">
                 <div class="flex justify-between items-center border-b pb-3 border-[#EFECE6]">
                     <h3 class="text-lg font-bold text-[#6E5750]">💼 バイトシフトを追加</h3>
-                    <button onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
+                    <button type="button" onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
                 </div>
                 
                 <form id="schedule-form" onsubmit="addSchedule(event)" class="space-y-4">
@@ -198,11 +224,11 @@
             </div>
         </div>
 
-        <!-- ================= 2. 課題一覧 ================= -->
+        <!-- ================= 3. 課題一覧 ================= -->
         <div id="tab-tasks" class="tab-content hidden space-y-6">
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
                 <h3 class="font-bold text-[#6E5750]">📝 課題管理</h3>
-                <button onclick="openTaskModal()" class="bg-[#6E5750] text-white font-bold px-5 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm flex items-center gap-2">
+                <button type="button" onclick="openTaskModal()" class="bg-[#6E5750] text-white font-bold px-5 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm flex items-center gap-2">
                     <span>✨ ＋ 新しい課題を追加</span>
                 </button>
             </div>
@@ -218,7 +244,7 @@
             <div class="bg-white p-6 rounded-3xl shadow-xl max-w-md w-full space-y-4 border border-[#EFECE6]">
                 <div class="flex justify-between items-center border-b pb-3 border-[#EFECE6]">
                     <h3 class="text-lg font-bold text-[#6E5750]">📝 新しい課題を追加</h3>
-                    <button onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
+                    <button type="button" onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
                 </div>
                 
                 <form id="task-form" onsubmit="addTask(event)" class="space-y-3">
@@ -247,7 +273,7 @@
             <div class="bg-white p-6 rounded-3xl shadow-xl max-w-md w-full space-y-4 border border-[#EFECE6]">
                 <div class="flex justify-between items-center border-b pb-3 border-[#EFECE6]">
                     <h3 class="text-lg font-bold text-[#6E5750]">💸 支出・収入を記録する</h3>
-                    <button onclick="closeMoneyModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
+                    <button type="button" onclick="closeMoneyModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
                 </div>
                 
                 <form id="money-form" onsubmit="addMoney(event)" class="space-y-3">
@@ -291,7 +317,7 @@
             </div>
         </div>
 
-        <!-- ================= 3. グッズ管理（タブ分け対応） ================= -->
+        <!-- ================= 4. グッズ管理（タブ分け対応） ================= -->
         <div id="tab-goods" class="tab-content hidden space-y-6">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
                 <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎀 グッズを登録</h2>
@@ -316,17 +342,17 @@
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <h3 class="text-lg font-bold text-[#6E5750]">🖼️ コレクション一覧</h3>
                     <div class="flex gap-2 overflow-x-auto w-full pb-2">
-                        <button onclick="filterGoods('all')" id="goods-filter-all" class="goods-filter-btn filter-btn-active px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] whitespace-nowrap">すべて</button>
-                        <button onclick="filterGoods('✨ 所持中')" id="goods-filter-owned" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">✨ 所持中</button>
-                        <button onclick="filterGoods('📦 予約・発送待ち')" id="goods-filter-wait" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">📦 予約・発送待ち</button>
-                        <button onclick="filterGoods('🥺 欲しい')" id="goods-filter-want" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🥺 欲しい</button>
+                        <button type="button" onclick="filterGoods('all')" id="goods-filter-all" class="goods-filter-btn filter-btn-active px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] whitespace-nowrap">すべて</button>
+                        <button type="button" onclick="filterGoods('✨ 所持中')" id="goods-filter-owned" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">✨ 所持中</button>
+                        <button type="button" onclick="filterGoods('📦 予約・発送待ち')" id="goods-filter-wait" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">📦 予約・発送待ち</button>
+                        <button type="button" onclick="filterGoods('🥺 欲しい')" id="goods-filter-want" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🥺 欲しい</button>
                     </div>
                 </div>
                 <div id="goods-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
             </div>
         </div>
 
-        <!-- ================= 4. ガチャ・買い物メモ ================= -->
+        <!-- ================= 5. ガチャ・買い物メモ ================= -->
         <div id="tab-gacha" class="tab-content hidden space-y-6">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
                 <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎰 ガチャ・買い物メモを追加</h2>
@@ -353,11 +379,11 @@
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
                     <h3 class="text-lg font-bold text-[#6E5750]">🛒 ほしいものリスト</h3>
                     <div class="flex gap-2 overflow-x-auto w-full pb-2">
-                        <button onclick="filterGacha('all')" id="filter-all" class="gacha-filter-btn filter-btn-active px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] whitespace-nowrap">すべて</button>
-                        <button onclick="filterGacha('🎰 ガチャガチャ')" id="filter-gacha" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🎰 ガチャガチャ</button>
-                        <button onclick="filterGacha('🛍️ コスメ・日用品')" id="filter-cosme" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🛍️ コスメ・日用品</button>
-                        <button onclick="filterGacha('📚 本・文房具')" id="filter-book" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">📚 本・文房具</button>
-                        <button onclick="filterGacha('✨ その他')" id="filter-other" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">✨ その他</button>
+                        <button type="button" onclick="filterGacha('all')" id="filter-all" class="gacha-filter-btn filter-btn-active px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] whitespace-nowrap">すべて</button>
+                        <button type="button" onclick="filterGacha('🎰 ガチャガチャ')" id="filter-gacha" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🎰 ガチャガチャ</button>
+                        <button type="button" onclick="filterGacha('🛍️ コスメ・日用品')" id="filter-cosme" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🛍️ コスメ・日用品</button>
+                        <button type="button" onclick="filterGacha('📚 本・文房具')" id="filter-book" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">📚 本・文房具</button>
+                        <button type="button" onclick="filterGacha('✨ その他')" id="filter-other" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">✨ その他</button>
                     </div>
                 </div>
                 <div id="gacha-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
@@ -368,437 +394,54 @@
 
     <!-- JavaScript ロジック -->
     <script>
-        let currentGoodsFilter = 'all';
-        let currentGachaFilter = 'all';
+        var currentGoodsFilter = 'all';
+        var currentGachaFilter = 'all';
+        var currentShiftDate = new Date();
+        var selectedShiftDateStr = null;
+
+        var schedules = JSON.parse(localStorage.getItem('schedules')) || [];
+        var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        var moneys = JSON.parse(localStorage.getItem('moneys')) || [];
+        var goods = JSON.parse(localStorage.getItem('goods')) || [];
+        var gachas = JSON.parse(localStorage.getItem('gachas')) || [];
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.tab-btn').forEach(el => {
-                el.classList.remove('tab-active');
-                el.classList.add('text-[#6E5750]');
-            });
-            document.getElementById('tab-' + tabId).classList.remove('hidden');
-            const btn = document.getElementById('btn-' + tabId);
-            btn.classList.add('tab-active');
-            btn.classList.remove('text-[#6E5750]');
+            var contents = document.querySelectorAll('.tab-content');
+            for (var i = 0; i < contents.length; i++) {
+                contents[i].classList.add('hidden');
+            }
+            var btns = document.querySelectorAll('.tab-btn');
+            for (var j = 0; j < btns.length; j++) {
+                btns[j].classList.remove('tab-active');
+                btns[j].classList.add('text-[#6E5750]');
+            }
+            var target = document.getElementById('tab-' + tabId);
+            if (target) {
+                target.classList.remove('hidden');
+            }
+            
+            var activeBtn = document.getElementById('btn-' + tabId);
+            if (activeBtn) {
+                activeBtn.classList.add('tab-active');
+                activeBtn.classList.remove('text-[#6E5750]');
+            }
         }
 
         // --- モーダル制御（シフト） ---
         function openScheduleModal() {
-            document.getElementById('schedule-modal').classList.remove('hidden');
-        }
-        function closeScheduleModal() {
-            document.getElementById('schedule-modal').classList.add('hidden');
-        }
-
-        // --- モーダル制御（課題） ---
-        function openTaskModal() {
-            document.getElementById('task-modal').classList.remove('hidden');
-        }
-        function closeTaskModal() {
-            document.getElementById('task-modal').classList.add('hidden');
-        }
-
-        // --- モーダル制御（家計簿） ---
-        function openMoneyModal() {
-            document.getElementById('money-modal').classList.remove('hidden');
-        }
-        function closeMoneyModal() {
-            document.getElementById('money-modal').classList.add('hidden');
-        }
-
-        let schedules = JSON.parse(localStorage.getItem('schedules')) || [];
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        let moneys = JSON.parse(localStorage.getItem('moneys')) || [];
-        let goods = JSON.parse(localStorage.getItem('goods')) || [];
-        let gachas = JSON.parse(localStorage.getItem('gachas')) || [];
-
-        // 月初めの自動積立チェック関数
-        function checkMonthlySavings() {
-            const now = new Date();
-            const currentYearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            const lastUpdatedMonth = localStorage.getItem('lastSavingsMonth');
-
-            let saveAccVal = parseFloat(localStorage.getItem('saveAcc')) || 150000;
-            let teikiVal = parseFloat(localStorage.getItem('teikiAcc')) || 100000;
-            let nisaVal = parseFloat(localStorage.getItem('nisaAcc')) || 50000;
-
-            if (lastUpdatedMonth !== currentYearMonth) {
-                saveAccVal -= 15000;
-                teikiVal += 10000;
-                nisaVal += 5000;
-
-                localStorage.setItem('saveAcc', saveAccVal);
-                localStorage.setItem('teikiAcc', teikiVal);
-                localStorage.setItem('nisaAcc', nisaVal);
-                localStorage.setItem('lastSavingsMonth', currentYearMonth);
+            var dateInput = document.getElementById('sch-date');
+            if (dateInput && !dateInput.value) {
+                dateInput.value = new Date().toISOString().split('T')[0];
             }
-
-            document.getElementById('saving-account').value = saveAccVal;
-            document.getElementById('teiki-account').value = teikiVal;
-            document.getElementById('nisa-account').value = nisaVal;
+            var modal = document.getElementById('schedule-modal');
+            if (modal) modal.classList.remove('hidden');
         }
-
-        window.onload = function() {
-            document.getElementById('main-account').value = localStorage.getItem('mainAcc') || 50000;
-            document.getElementById('weekly-budget-limit').value = localStorage.getItem('weeklyLimit') || 10000;
-            
-            checkMonthlySavings();
-            
-            renderSchedules();
-            renderTasks();
-            renderMoneys();
-            renderGoods();
-            renderGachas();
-        };
-
-        function saveAccounts() {
-            localStorage.setItem('mainAcc', document.getElementById('main-account').value);
-            localStorage.setItem('weeklyLimit', document.getElementById('weekly-budget-limit').value);
-            localStorage.setItem('saveAcc', document.getElementById('saving-account').value);
-            localStorage.setItem('teikiAcc', document.getElementById('teiki-account').value);
-            localStorage.setItem('nisaAcc', document.getElementById('nisa-account').value);
-            renderMoneys();
-        }
-
-        function addSchedule(e) {
-            e.preventDefault();
-            const type = document.getElementById('sch-type').value;
-            const date = document.getElementById('sch-date').value;
-            const start = document.getElementById('sch-start').value;
-            const end = document.getElementById('sch-end').value;
-            const breakTime = parseInt(document.getElementById('sch-break').value) || 0;
-
-            schedules.push({ id: Date.now(), title: type, type, date, start, end, breakTime });
-            localStorage.setItem('schedules', JSON.stringify(schedules));
-            document.getElementById('schedule-form').reset();
-            closeScheduleModal();
-            renderSchedules();
-        }
-
-        function calculateWage(item) {
-            if (!item.start || !item.end) return 0;
-            const [sH, sM] = item.start.split(':').map(Number);
-            const [eH, eM] = item.end.split(':').map(Number);
-            let totalMins = (eH * 60 + eM) - (sH * 60 + sM) - item.breakTime;
-            if (totalMins <= 0) return 0;
-
-            if (item.type.includes('児童館')) {
-                return Math.floor((totalMins / 60) * 1250);
+        function openScheduleModalWithDate() {
+            var dateInput = document.getElementById('sch-date');
+            if (dateInput && selectedShiftDateStr) {
+                dateInput.value = selectedShiftDateStr;
             }
-
-            const dayOfWeek = new Date(item.date).getDay();
-            const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
-
-            if (isWeekend) {
-                return Math.floor((totalMins / 60) * 1250);
-            } else {
-                const startMins = sH * 60 + sM;
-                const endMins = eH * 60 + eM;
-                const borderMins = 18 * 60;
-
-                let rawWorkMins = endMins - startMins;
-                let breakRatio = (rawWorkMins - item.breakTime) / rawWorkMins;
-
-                let before18 = Math.max(0, Math.min(endMins, borderMins) - startMins) * breakRatio;
-                let after18 = Math.max(0, endMins - Math.max(startMins, borderMins)) * breakRatio;
-
-                let pay = (before18 / 60 * 1200) + (after18 / 60 * 1250);
-                return Math.floor(pay);
-            }
+            var modal = document.getElementById('schedule-modal');
+            if (modal) modal.classList.remove('hidden');
         }
-
-        function renderSchedules() {
-            const list = document.getElementById('schedule-list');
-            list.innerHTML = '';
-            let totalWage = 0;
-
-            schedules.sort((a, b) => new Date(a.date) - new Date(b.date)).forEach(item => {
-                let badgeClass = 'bg-red-100 text-red-700';
-                if(item.type.includes('児童館')) badgeClass = 'bg-blue-100 text-blue-700';
-
-                const wage = calculateWage(item);
-                totalWage += wage;
-
-                const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-3 bg-[#FAF7F2] rounded-xl border border-[#D5C5B9] text-sm';
-                div.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs px-2 py-0.5 rounded-full font-bold ${badgeClass}">${item.type}</span>
-                            <span class="font-bold">📅 ${item.date} (${item.start}〜${item.end})</span>
-                        </div>
-                        <span class="text-xs text-green-700 font-bold bg-green-50 px-2 py-0.5 rounded-lg">給料見込み: ¥${wage.toLocaleString()}</span>
-                    </div>
-                    <button onclick="deleteSchedule(${item.id})" class="text-gray-400 hover:text-red-600 text-xs">✕ 削除</button>
-                `;
-                list.appendChild(div);
-            });
-            document.getElementById('total-wage-display').innerText = '¥ ' + totalWage.toLocaleString();
-        }
-
-        function deleteSchedule(id) {
-            schedules = schedules.filter(i => i.id !== id);
-            localStorage.setItem('schedules', JSON.stringify(schedules));
-            renderSchedules();
-        }
-
-        // --- 課題処理 ---
-        function addTask(e) {
-            e.preventDefault();
-            const title = document.getElementById('task-title').value;
-            const subject = document.getElementById('task-subject').value;
-            const deadline = document.getElementById('task-deadline').value;
-
-            tasks.push({ id: Date.now(), title, subject, deadline });
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            document.getElementById('task-form').reset();
-            closeTaskModal();
-            renderTasks();
-        }
-
-        function renderTasks() {
-            const list = document.getElementById('task-list');
-            list.innerHTML = '';
-            tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline)).forEach(item => {
-                const diffDays = Math.ceil((new Date(item.deadline) - new Date()) / (1000 * 60 * 60 * 24));
-                let badge = `<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">あと ${diffDays} 日</span>`;
-                if(diffDays < 0) badge = `<span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full font-bold">期限切れ</span>`;
-                else if(diffDays === 0) badge = `<span class="text-xs bg-red-500 text-white px-2 py-1 rounded-full font-bold animate-pulse">本日締切！</span>`;
-                else if(diffDays <= 2) badge = `<span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">あと ${diffDays} 日 (やばい！)</span>`;
-
-                const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-4 bg-[#FAF7F2] rounded-2xl border border-[#D5C5B9]';
-                div.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-xs font-bold text-[#8C736A] bg-[#EFECE6] px-2 py-0.5 rounded-full">${item.subject}</span>
-                            <span class="font-bold text-sm">${item.title}</span>
-                        </div>
-                        <p class="text-xs text-gray-500">締切: ${item.deadline}</p>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        ${badge}
-                        <button onclick="deleteTask(${item.id})" class="text-gray-400 hover:text-red-600 text-sm">完了/削除</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-        }
-
-        function deleteTask(id) {
-            tasks = tasks.filter(i => i.id !== id);
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            renderTasks();
-        }
-
-        // --- 家計簿処理 ---
-        function addMoney(e) {
-            e.preventDefault();
-            const title = document.getElementById('m-title').value;
-            const amount = parseFloat(document.getElementById('m-amount').value);
-            const category = document.getElementById('m-category').value;
-            const payment = document.getElementById('m-payment').value;
-
-            moneys.push({ id: Date.now(), title, amount, category, payment });
-            localStorage.setItem('moneys', JSON.stringify(moneys));
-            document.getElementById('money-form').reset();
-            closeMoneyModal();
-            renderMoneys();
-        }
-
-        function renderMoneys() {
-            const list = document.getElementById('money-list');
-            list.innerHTML = '';
-            let sumWithOshi = 0;
-            let sumWithoutOshi = 0;
-            let totalCredit = 0;
-            let weeklySpent = 0;
-
-            moneys.slice().reverse().forEach(item => {
-                if(item.category !== '💰 バイト収入') {
-                    sumWithOshi += item.amount;
-                    if(item.category !== '💖 推し活' && item.category !== '🎰 ガチャガチャ') {
-                        sumWithoutOshi += item.amount;
-                    }
-                    if(item.payment === 'クレカ') {
-                        totalCredit += item.amount;
-                    }
-                    weeklySpent += item.amount;
-                }
-
-                const div = document.createElement('div');
-                div.className = 'flex justify-between items-center p-3 bg-[#FAF7F2] rounded-xl text-sm border border-[#D5C5B9]';
-                div.innerHTML = `
-                    <div>
-                        <span class="font-bold">${item.title}</span>
-                        <span class="text-xs text-gray-500 block">${item.category} / ${item.payment}</span>
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <span class="font-bold ${item.category === '💰 バイト収入' ? 'text-green-600' : ''}">${item.category === '💰 バイト収入' ? '+' : '-'}${item.amount.toLocaleString()}円</span>
-                        <button onclick="deleteMoney(${item.id})" class="text-gray-400 hover:text-red-600 text-xs">✕</button>
-                    </div>
-                `;
-                list.appendChild(div);
-            });
-
-            const weeklyLimit = parseFloat(document.getElementById('weekly-budget-limit').value) || 10000;
-            const weeklyRem = weeklyLimit - weeklySpent;
-            document.getElementById('weekly-remaining-display').innerText = '¥ ' + weeklyRem.toLocaleString();
-            document.getElementById('total-credit-display').innerText = '¥ ' + totalCredit.toLocaleString();
-
-            const saveAcc = parseFloat(document.getElementById('saving-account').value) || 0;
-            const realSaving = saveAcc - totalCredit;
-            document.getElementById('real-saving-display').innerText = '¥ ' + realSaving.toLocaleString();
-
-            document.getElementById('sum-with-oshi').innerText = '¥ ' + sumWithOshi.toLocaleString();
-            document.getElementById('sum-without-oshi').innerText = '¥ ' + sumWithoutOshi.toLocaleString();
-            document.getElementById('sum-only-oshi').innerText = '¥ ' + (sumWithOshi - sumWithoutOshi).toLocaleString();
-        }
-
-        function deleteMoney(id) {
-            moneys = moneys.filter(i => i.id !== id);
-            localStorage.setItem('moneys', JSON.stringify(moneys));
-            renderMoneys();
-        }
-
-        // --- グッズ管理（タブ分け対応） ---
-        function addGoods(e) {
-            e.preventDefault();
-            const name = document.getElementById('g-name').value;
-            const status = document.getElementById('g-status').value;
-            let url = document.getElementById('g-url').value;
-            const fileInput = document.getElementById('g-file');
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    goods.push({ id: Date.now(), name, status, url: e.target.result });
-                    localStorage.setItem('goods', JSON.stringify(goods));
-                    document.getElementById('goods-form').reset();
-                    renderGoods();
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                goods.push({ id: Date.now(), name, status, url: url || 'https://via.placeholder.com/150?text=No+Image' });
-                localStorage.setItem('goods', JSON.stringify(goods));
-                document.getElementById('goods-form').reset();
-                renderGoods();
-            }
-        }
-
-        function filterGoods(status) {
-            currentGoodsFilter = status;
-            document.querySelectorAll('.goods-filter-btn').forEach(btn => {
-                btn.classList.remove('filter-btn-active');
-                btn.classList.add('text-[#6E5750]');
-            });
-            
-            if(status === 'all') document.getElementById('goods-filter-all').classList.add('filter-btn-active');
-            else if(status === '✨ 所持中') document.getElementById('goods-filter-owned').classList.add('filter-btn-active');
-            else if(status === '📦 予約・発送待ち') document.getElementById('goods-filter-wait').classList.add('filter-btn-active');
-            else if(status === '🥺 欲しい') document.getElementById('goods-filter-want').classList.add('filter-btn-active');
-
-            renderGoods();
-        }
-
-        function renderGoods() {
-            const grid = document.getElementById('goods-grid');
-            grid.innerHTML = '';
-
-            const filtered = currentGoodsFilter === 'all' ? goods : goods.filter(g => g.status === currentGoodsFilter);
-
-            filtered.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'bg-[#FAF7F2] p-3 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = `
-                    <div>
-                        <img src="${item.url}" class="w-full h-32 object-cover rounded-xl mb-2" onerror="this.src='https://via.placeholder.com/150?text=Image'">
-                        <span class="text-xs bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">${item.status}</span>
-                        <h4 class="font-bold text-sm mt-1">${item.name}</h4>
-                    </div>
-                    <button onclick="deleteGoods(${item.id})" class="text-xs text-gray-400 hover:text-red-600 mt-2 text-right">削除</button>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function deleteGoods(id) {
-            goods = goods.filter(i => i.id !== id);
-            localStorage.setItem('goods', JSON.stringify(goods));
-            renderGoods();
-        }
-
-        // --- ガチャ・買い物メモ ---
-        function addGacha(e) {
-            e.preventDefault();
-            const name = document.getElementById('ga-name').value;
-            const genre = document.getElementById('ga-genre').value;
-            const price = document.getElementById('ga-price').value;
-            const date = document.getElementById('ga-date').value;
-            let url = document.getElementById('ga-url').value;
-            const fileInput = document.getElementById('ga-file');
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    gachas.push({ id: Date.now(), name, genre, price, date, url: e.target.result });
-                    localStorage.setItem('gachas', JSON.stringify(gachas));
-                    document.getElementById('gacha-form').reset();
-                    renderGachas();
-                };
-                reader.readAsDataURL(fileInput.files[0]);
-            } else {
-                gachas.push({ id: Date.now(), name, genre, price, date, url: url || 'https://via.placeholder.com/150?text=Gacha' });
-                localStorage.setItem('gachas', JSON.stringify(gachas));
-                document.getElementById('gacha-form').reset();
-                renderGachas();
-            }
-        }
-
-        function filterGacha(genre) {
-            currentGachaFilter = genre;
-            document.querySelectorAll('.gacha-filter-btn').forEach(btn => {
-                btn.classList.remove('filter-btn-active');
-                btn.classList.add('text-[#6E5750]');
-            });
-            
-            if(genre === 'all') document.getElementById('filter-all').classList.add('filter-btn-active');
-            else if(genre === '🎰 ガチャガチャ') document.getElementById('filter-gacha').classList.add('filter-btn-active');
-            else if(genre === '🛍️ コスメ・日用品') document.getElementById('filter-cosme').classList.add('filter-btn-active');
-            else if(genre === '📚 本・文房具') document.getElementById('filter-book').classList.add('filter-btn-active');
-            else if(genre === '✨ その他') document.getElementById('filter-other').classList.add('filter-btn-active');
-
-            renderGachas();
-        }
-
-        function renderGachas() {
-            const grid = document.getElementById('gacha-grid');
-            grid.innerHTML = '';
-            
-            const filtered = currentGachaFilter === 'all' ? gachas : gachas.filter(g => g.genre === currentGachaFilter);
-
-            filtered.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'bg-[#FAF7F2] p-4 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = `
-                    <div>
-                        <img src="${item.url}" class="w-full h-36 object-cover rounded-xl mb-2" onerror="this.src='https://via.placeholder.com/150?text=Gacha'">
-                        <span class="text-xs bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">${item.genre}</span>
-                        <h4 class="font-bold text-sm mt-1">${item.name}</h4>
-                        <p class="text-xs text-gray-600 mt-1">💰 ${item.price ? item.price + '円' : '金額未設定'} / 📅 ${item.date || '予定なし'}</p>
-                    </div>
-                    <button onclick="deleteGacha(${item.id})" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除・GET済</button>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function deleteGacha(id) {
-            gachas = gachas.filter(i => i.id !== id);
-            localStorage.setItem('gachas', JSON.stringify(gachas));
-            renderGachas();
-        }
-    </script>
-</body>
-</html>
+        function closeSchedule

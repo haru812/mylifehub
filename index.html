@@ -444,4 +444,511 @@
             var modal = document.getElementById('schedule-modal');
             if (modal) modal.classList.remove('hidden');
         }
-        function closeSchedule
+        function closeScheduleModal() {
+            var modal = document.getElementById('schedule-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // --- モーダル制御（課題） ---
+        function openTaskModal() {
+            var modal = document.getElementById('task-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+        function closeTaskModal() {
+            var modal = document.getElementById('task-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // --- モーダル制御（家計簿） ---
+        function openMoneyModal() {
+            var modal = document.getElementById('money-modal');
+            if (modal) modal.classList.remove('hidden');
+        }
+        function closeMoneyModal() {
+            var modal = document.getElementById('money-modal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        // 月初めの自動積立チェック関数
+        function checkMonthlySavings() {
+            var now = new Date();
+            var currentYearMonth = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            var lastUpdatedMonth = localStorage.getItem('lastSavingsMonth');
+
+            var saveAccVal = parseFloat(localStorage.getItem('saveAcc')) || 150000;
+            var teikiVal = parseFloat(localStorage.getItem('teikiAcc')) || 100000;
+            var nisaVal = parseFloat(localStorage.getItem('nisaAcc')) || 50000;
+
+            if (lastUpdatedMonth !== currentYearMonth) {
+                saveAccVal -= 15000;
+                teikiVal += 10000;
+                nisaVal += 5000;
+
+                localStorage.setItem('saveAcc', saveAccVal);
+                localStorage.setItem('teikiAcc', teikiVal);
+                localStorage.setItem('nisaAcc', nisaVal);
+                localStorage.setItem('lastSavingsMonth', currentYearMonth);
+            }
+
+            var saveEl = document.getElementById('saving-account');
+            var teikiEl = document.getElementById('teiki-account');
+            var nisaEl = document.getElementById('nisa-account');
+            if (saveEl) saveEl.value = saveAccVal;
+            if (teikiEl) teikiEl.value = teikiVal;
+            if (nisaEl) nisaEl.value = nisaVal;
+        }
+
+        window.addEventListener('DOMContentLoaded', function() {
+            try {
+                var mainAccEl = document.getElementById('main-account');
+                var weeklyLimitEl = document.getElementById('weekly-budget-limit');
+                if (mainAccEl) mainAccEl.value = localStorage.getItem('mainAcc') || 50000;
+                if (weeklyLimitEl) weeklyLimitEl.value = localStorage.getItem('weeklyLimit') || 10000;
+                
+                checkMonthlySavings();
+                renderShiftCalendar();
+                renderTasks();
+                renderMoneys();
+                renderGoods();
+                renderGachas();
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        function saveAccounts() {
+            var mainAccEl = document.getElementById('main-account');
+            var weeklyLimitEl = document.getElementById('weekly-budget-limit');
+            var saveAccEl = document.getElementById('saving-account');
+            var teikiAccEl = document.getElementById('teiki-account');
+            var nisaAccEl = document.getElementById('nisa-account');
+
+            if (mainAccEl) localStorage.setItem('mainAcc', mainAccEl.value);
+            if (weeklyLimitEl) localStorage.setItem('weeklyLimit', weeklyLimitEl.value);
+            if (saveAccEl) localStorage.setItem('saveAcc', saveAccEl.value);
+            if (teikiAccEl) localStorage.setItem('teikiAcc', teikiAccEl.value);
+            if (nisaAccEl) localStorage.setItem('nisaAcc', nisaAccEl.value);
+            renderMoneys();
+        }
+
+        function addSchedule(e) {
+            e.preventDefault();
+            var type = document.getElementById('sch-type').value;
+            var date = document.getElementById('sch-date').value;
+            var start = document.getElementById('sch-start').value;
+            var end = document.getElementById('sch-end').value;
+            var breakTime = parseInt(document.getElementById('sch-break').value) || 0;
+
+            schedules.push({ id: Date.now(), title: type, type: type, date: date, start: start, end: end, breakTime: breakTime });
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+            var form = document.getElementById('schedule-form');
+            if (form) form.reset();
+            closeScheduleModal();
+            
+            selectedShiftDateStr = date;
+            renderShiftCalendar();
+            showSelectedDateShifts(date);
+        }
+
+        function calculateWage(item) {
+            if (!item.start || !item.end) return 0;
+            var sParts = item.start.split(':').map(Number);
+            var eParts = item.end.split(':').map(Number);
+            var sH = sParts[0], sM = sParts[1];
+            var eH = eParts[0], eM = eParts[1];
+            var totalMins = (eH * 60 + eM) - (sH * 60 + sM) - (item.breakTime || 0);
+            if (totalMins <= 0) return 0;
+
+            if (item.type && item.type.indexOf('児童館') !== -1) {
+                return Math.floor((totalMins / 60) * 1250);
+            }
+
+            var dayOfWeek = new Date(item.date).getDay();
+            var isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+            if (isWeekend) {
+                return Math.floor((totalMins / 60) * 1250);
+            } else {
+                var startMins = sH * 60 + sM;
+                var endMins = eH * 60 + eM;
+                var borderMins = 18 * 60;
+
+                var rawWorkMins = endMins - startMins;
+                var breakRatio = (rawWorkMins - (item.breakTime || 0)) / rawWorkMins;
+
+                var before18 = Math.max(0, Math.min(endMins, borderMins) - startMins) * breakRatio;
+                var after18 = Math.max(0, endMins - Math.max(startMins, borderMins)) * breakRatio;
+
+                var pay = (before18 / 60 * 1200) + (after18 / 60 * 1250);
+                return Math.floor(pay);
+            }
+        }
+
+        // --- コンパクトバイトカレンダー描画 ---
+        function renderShiftCalendar() {
+            var grid = document.getElementById('shift-calendar-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            var year = currentShiftDate.getFullYear();
+            var month = currentShiftDate.getMonth();
+            var ymPrefix = year + '-' + String(month + 1).padStart(2, '0');
+
+            var calTitle = document.getElementById('shift-cal-title');
+            var wageLabel = document.getElementById('shift-month-wage-label');
+            if (calTitle) calTitle.innerText = '📅 ' + year + '年 ' + (month + 1) + '月';
+            if (wageLabel) wageLabel.innerText = (month + 1) + '月のバイト給料見込み';
+
+            var monthWage = 0;
+            schedules.forEach(function(s) {
+                if (s.date && s.date.indexOf(ymPrefix) === 0) {
+                    monthWage += calculateWage(s);
+                }
+            });
+            var totalWageEl = document.getElementById('total-wage-display');
+            if (totalWageEl) totalWageEl.innerText = '¥ ' + monthWage.toLocaleString();
+
+            var firstDay = new Date(year, month, 1).getDay();
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            for (var i = 0; i < firstDay; i++) {
+                var empty = document.createElement('div');
+                empty.className = 'bg-gray-50/70 rounded-xl mini-cal-day p-1';
+                grid.appendChild(empty);
+            }
+
+            for (var d = 1; d <= daysInMonth; d++) {
+                (function(dayNum) {
+                    var dateStr = ymPrefix + '-' + String(dayNum).padStart(2, '0');
+                    var dayShifts = schedules.filter(function(s) { return s.date === dateStr; });
+                    var isSelected = (selectedShiftDateStr === dateStr);
+
+                    var cell = document.createElement('div');
+                    cell.className = 'rounded-xl mini-cal-day p-1 flex flex-col justify-between border ' + (isSelected ? 'bg-[#EFECE6] border-[#6E5750] ring-1 ring-[#6E5750]' : 'bg-[#FAF7F2] border-[#EFECE6]');
+                    cell.onclick = function() {
+                        selectedShiftDateStr = dateStr;
+                        renderShiftCalendar();
+                        showSelectedDateShifts(dateStr);
+                    };
+
+                    var badgesHtml = '';
+                    dayShifts.forEach(function(s) {
+                        var isJidoukan = s.type && s.type.indexOf('児童館') !== -1;
+                        var colorClass = isJidoukan ? 'bg-blue-400 text-white' : 'bg-red-400 text-white';
+                        var shortLabel = isJidoukan ? '児童館' : 'セリア';
+                        badgesHtml += '<div class="text-[9px] leading-tight truncate rounded px-1 py-0.5 font-bold ' + colorClass + '">' + shortLabel + '</div>';
+                    });
+
+                    cell.innerHTML = '<span class="text-[11px] font-bold text-[#6E5750] leading-none">' + dayNum + '</span><div class="flex flex-col gap-0.5 mt-1">' + badgesHtml + '</div>';
+                    grid.appendChild(cell);
+                })(d);
+            }
+        }
+
+        function changeShiftMonth(delta) {
+            currentShiftDate.setMonth(currentShiftDate.getMonth() + delta);
+            renderShiftCalendar();
+        }
+
+        function showSelectedDateShifts(dateStr) {
+            var container = document.getElementById('selected-day-shifts');
+            var label = document.getElementById('selected-shift-date-label');
+            var addBtn = document.getElementById('btn-add-selected-date');
+            if (!container) return;
+
+            if (label) label.innerText = '📌 ' + dateStr + ' のシフト';
+            if (addBtn) addBtn.classList.remove('hidden');
+
+            var dayShifts = schedules.filter(function(s) { return s.date === dateStr; });
+            if (dayShifts.length === 0) {
+                container.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">この日のシフトはありません</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            dayShifts.forEach(function(item) {
+                var isJidoukan = item.type && item.type.indexOf('児童館') !== -1;
+                var badgeClass = isJidoukan ? 'bg-blue-100 text-blue-700' : 'bg-red-100 text-red-700';
+                var wage = calculateWage(item);
+
+                var div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-3 bg-[#FAF7F2] rounded-xl border border-[#D5C5B9] text-xs';
+                div.innerHTML = '<div><div class="flex items-center gap-2 mb-1"><span class="px-2 py-0.5 rounded-full font-bold ' + badgeClass + '">' + item.type + '</span><span class="font-bold">' + item.start + '〜' + item.end + '</span></div><span class="text-green-700 font-bold">見込み給料: ¥' + wage.toLocaleString() + (item.breakTime ? ' (休憩' + item.breakTime + '分)' : '') + '</span></div><button type="button" onclick="deleteSchedule(' + item.id + ')" class="text-gray-400 hover:text-red-600 font-bold px-2 py-1">✕ 削除</button>';
+                container.appendChild(div);
+            });
+        }
+
+        function deleteSchedule(id) {
+            schedules = schedules.filter(function(i) { return i.id !== id; });
+            localStorage.setItem('schedules', JSON.stringify(schedules));
+            renderShiftCalendar();
+            if (selectedShiftDateStr) {
+                showSelectedDateShifts(selectedShiftDateStr);
+            }
+        }
+
+        // --- 課題処理 ---
+        function addTask(e) {
+            e.preventDefault();
+            var title = document.getElementById('task-title').value;
+            var subject = document.getElementById('task-subject').value;
+            var deadline = document.getElementById('task-deadline').value;
+
+            tasks.push({ id: Date.now(), title: title, subject: subject, deadline: deadline });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            var form = document.getElementById('task-form');
+            if (form) form.reset();
+            closeTaskModal();
+            renderTasks();
+        }
+
+        function renderTasks() {
+            var list = document.getElementById('task-list');
+            if (!list) return;
+            list.innerHTML = '';
+            tasks.slice().sort(function(a, b) { return new Date(a.deadline) - new Date(b.deadline); }).forEach(function(item) {
+                var diffDays = Math.ceil((new Date(item.deadline) - new Date()) / (1000 * 60 * 60 * 24));
+                var badge = '<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-bold">あと ' + diffDays + ' 日</span>';
+                if (diffDays < 0) badge = '<span class="text-xs bg-gray-200 text-gray-600 px-2 py-1 rounded-full font-bold">期限切れ</span>';
+                else if (diffDays === 0) badge = '<span class="text-xs bg-red-500 text-white px-2 py-1 rounded-full font-bold animate-pulse">本日締切！</span>';
+                else if (diffDays <= 2) badge = '<span class="text-xs bg-red-100 text-red-700 px-2 py-1 rounded-full font-bold">あと ' + diffDays + ' 日 (やばい！)</span>';
+
+                var div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-4 bg-[#FAF7F2] rounded-2xl border border-[#D5C5B9]';
+                div.innerHTML = '<div><div class="flex items-center gap-2 mb-1"><span class="text-xs font-bold text-[#8C736A] bg-[#EFECE6] px-2 py-0.5 rounded-full">' + item.subject + '</span><span class="font-bold text-sm">' + item.title + '</span></div><p class="text-xs text-gray-500">締切: ' + item.deadline + '</p></div><div class="flex items-center gap-3">' + badge + '<button type="button" onclick="deleteTask(' + item.id + ')" class="text-gray-400 hover:text-red-600 text-sm">完了/削除</button></div>';
+                list.appendChild(div);
+            });
+        }
+
+        function deleteTask(id) {
+            tasks = tasks.filter(function(i) { return i.id !== id; });
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+            renderTasks();
+        }
+
+        // --- 家計簿処理 ---
+        function addMoney(e) {
+            e.preventDefault();
+            var title = document.getElementById('m-title').value;
+            var amount = parseFloat(document.getElementById('m-amount').value);
+            var category = document.getElementById('m-category').value;
+            var payment = document.getElementById('m-payment').value;
+
+            moneys.push({ id: Date.now(), title: title, amount: amount, category: category, payment: payment });
+            localStorage.setItem('moneys', JSON.stringify(moneys));
+            var form = document.getElementById('money-form');
+            if (form) form.reset();
+            closeMoneyModal();
+            renderMoneys();
+        }
+
+        function renderMoneys() {
+            var list = document.getElementById('money-list');
+            if (!list) return;
+            list.innerHTML = '';
+            var sumWithOshi = 0;
+            var sumWithoutOshi = 0;
+            var totalCredit = 0;
+            var weeklySpent = 0;
+
+            moneys.slice().reverse().forEach(function(item) {
+                if (item.category !== '💰 バイト収入') {
+                    sumWithOshi += item.amount;
+                    if (item.category !== '💖 推し活' && item.category !== '🎰 ガチャガチャ') {
+                        sumWithoutOshi += item.amount;
+                    }
+                    if (item.payment === 'クレカ') {
+                        totalCredit += item.amount;
+                    }
+                    weeklySpent += item.amount;
+                }
+
+                var div = document.createElement('div');
+                div.className = 'flex justify-between items-center p-3 bg-[#FAF7F2] rounded-xl text-sm border border-[#D5C5B9]';
+                div.innerHTML = '<div><span class="font-bold">' + item.title + '</span><span class="text-xs text-gray-500 block">' + item.category + ' / ' + item.payment + '</span></div><div class="flex items-center gap-3"><span class="font-bold ' + (item.category === '💰 バイト収入' ? 'text-green-600' : '') + '">' + (item.category === '💰 バイト収入' ? '+' : '-') + item.amount.toLocaleString() + '円</span><button type="button" onclick="deleteMoney(' + item.id + ')" class="text-gray-400 hover:text-red-600 text-xs">✕</button></div>';
+                list.appendChild(div);
+            });
+
+            var weeklyLimitEl = document.getElementById('weekly-budget-limit');
+            var weeklyLimit = weeklyLimitEl ? (parseFloat(weeklyLimitEl.value) || 10000) : 10000;
+            var weeklyRem = weeklyLimit - weeklySpent;
+            
+            var remDisp = document.getElementById('weekly-remaining-display');
+            var creditDisp = document.getElementById('total-credit-display');
+            var realSavDisp = document.getElementById('real-saving-display');
+            var sumWithOshiDisp = document.getElementById('sum-with-oshi');
+            var sumWithoutOshiDisp = document.getElementById('sum-without-oshi');
+            var sumOnlyOshiDisp = document.getElementById('sum-only-oshi');
+
+            if (remDisp) remDisp.innerText = '¥ ' + weeklyRem.toLocaleString();
+            if (creditDisp) creditDisp.innerText = '¥ ' + totalCredit.toLocaleString();
+
+            var saveAccEl = document.getElementById('saving-account');
+            var saveAcc = saveAccEl ? (parseFloat(saveAccEl.value) || 0) : 0;
+            var realSaving = saveAcc - totalCredit;
+            if (realSavDisp) realSavDisp.innerText = '¥ ' + realSaving.toLocaleString();
+
+            if (sumWithOshiDisp) sumWithOshiDisp.innerText = '¥ ' + sumWithOshi.toLocaleString();
+            if (sumWithoutOshiDisp) sumWithoutOshiDisp.innerText = '¥ ' + sumWithoutOshi.toLocaleString();
+            if (sumOnlyOshiDisp) sumOnlyOshiDisp.innerText = '¥ ' + (sumWithOshi - sumWithoutOshi).toLocaleString();
+        }
+
+        function deleteMoney(id) {
+            moneys = moneys.filter(function(i) { return i.id !== id; });
+            localStorage.setItem('moneys', JSON.stringify(moneys));
+            renderMoneys();
+        }
+
+        // --- グッズ管理 ---
+        function addGoods(e) {
+            e.preventDefault();
+            var name = document.getElementById('g-name').value;
+            var status = document.getElementById('g-status').value;
+            var url = document.getElementById('g-url').value;
+            var fileInput = document.getElementById('g-file');
+
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    goods.push({ id: Date.now(), name: name, status: status, url: ev.target.result });
+                    localStorage.setItem('goods', JSON.stringify(goods));
+                    var form = document.getElementById('goods-form');
+                    if (form) form.reset();
+                    renderGoods();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                goods.push({ id: Date.now(), name: name, status: status, url: url || 'https://via.placeholder.com/150?text=No+Image' });
+                localStorage.setItem('goods', JSON.stringify(goods));
+                var form = document.getElementById('goods-form');
+                if (form) form.reset();
+                renderGoods();
+            }
+        }
+
+        function filterGoods(status) {
+            currentGoodsFilter = status;
+            var btns = document.querySelectorAll('.goods-filter-btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('filter-btn-active');
+                btns[i].classList.add('text-[#6E5750]');
+            }
+            
+            if (status === 'all') {
+                var btnAll = document.getElementById('goods-filter-all');
+                if (btnAll) btnAll.classList.add('filter-btn-active');
+            } else if (status === '✨ 所持中') {
+                var btnOwned = document.getElementById('goods-filter-owned');
+                if (btnOwned) btnOwned.classList.add('filter-btn-active');
+            } else if (status === '📦 予約・発送待ち') {
+                var btnWait = document.getElementById('goods-filter-wait');
+                if (btnWait) btnWait.classList.add('filter-btn-active');
+            } else if (status === '🥺 欲しい') {
+                var btnWant = document.getElementById('goods-filter-want');
+                if (btnWant) btnWant.classList.add('filter-btn-active');
+            }
+
+            renderGoods();
+        }
+
+        function renderGoods() {
+            var grid = document.getElementById('goods-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            var filtered = currentGoodsFilter === 'all' ? goods : goods.filter(function(g) { return g.status === currentGoodsFilter; });
+
+            filtered.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'bg-[#FAF7F2] p-3 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
+                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-32 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Image\'"><span class="text-xs bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.status + '</span><h4 class="font-bold text-sm mt-1">' + item.name + '</h4></div><button type="button" onclick="deleteGoods(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-2 text-right">削除</button>';
+                grid.appendChild(div);
+            });
+        }
+
+        function deleteGoods(id) {
+            goods = goods.filter(function(i) { return i.id !== id; });
+            localStorage.setItem('goods', JSON.stringify(goods));
+            renderGoods();
+        }
+
+        // --- ガチャ・買い物メモ ---
+        function addGacha(e) {
+            e.preventDefault();
+            var name = document.getElementById('ga-name').value;
+            var genre = document.getElementById('ga-genre').value;
+            var price = document.getElementById('ga-price').value;
+            var date = document.getElementById('ga-date').value;
+            var url = document.getElementById('ga-url').value;
+            var fileInput = document.getElementById('ga-file');
+
+            if (fileInput && fileInput.files && fileInput.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(ev) {
+                    gachas.push({ id: Date.now(), name: name, genre: genre, price: price, date: date, url: ev.target.result });
+                    localStorage.setItem('gachas', JSON.stringify(gachas));
+                    var form = document.getElementById('gacha-form');
+                    if (form) form.reset();
+                    renderGachas();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                gachas.push({ id: Date.now(), name: name, genre: genre, price: price, date: date, url: url || 'https://via.placeholder.com/150?text=Gacha' });
+                localStorage.setItem('gachas', JSON.stringify(gachas));
+                var form = document.getElementById('gacha-form');
+                if (form) form.reset();
+                renderGachas();
+            }
+        }
+
+        function filterGacha(genre) {
+            currentGachaFilter = genre;
+            var btns = document.querySelectorAll('.gacha-filter-btn');
+            for (var i = 0; i < btns.length; i++) {
+                btns[i].classList.remove('filter-btn-active');
+                btns[i].classList.add('text-[#6E5750]');
+            }
+            
+            if (genre === 'all') {
+                var btnAll = document.getElementById('filter-all');
+                if (btnAll) btnAll.classList.add('filter-btn-active');
+            } else if (genre === '🎰 ガチャガチャ') {
+                var btnG = document.getElementById('filter-gacha');
+                if (btnG) btnG.classList.add('filter-btn-active');
+            } else if (genre === '🛍️ コスメ・日用品') {
+                var btnC = document.getElementById('filter-cosme');
+                if (btnC) btnC.classList.add('filter-btn-active');
+            } else if (genre === '📚 本・文房具') {
+                var btnB = document.getElementById('filter-book');
+                if (btnB) btnB.classList.add('filter-btn-active');
+            } else if (genre === '✨ その他') {
+                var btnO = document.getElementById('filter-other');
+                if (btnO) btnO.classList.add('filter-btn-active');
+            }
+
+            renderGachas();
+        }
+
+        function renderGachas() {
+            var grid = document.getElementById('gacha-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            
+            var filtered = currentGachaFilter === 'all' ? gachas : gachas.filter(function(g) { return g.genre === currentGachaFilter; });
+
+            filtered.forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'bg-[#FAF7F2] p-4 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
+                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-36 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Gacha\'"><span class="text-xs bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.genre + '</span><h4 class="font-bold text-sm mt-1">' + item.name + '</h4><p class="text-xs text-gray-600 mt-1">💰 ' + (item.price ? item.price + '円' : '金額未設定') + ' / 📅 ' + (item.date || '予定なし') + '</p></div><button type="button" onclick="deleteGacha(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除・GET済</button>';
+                grid.appendChild(div);
+            });
+        }
+
+        function deleteGacha(id) {
+            gachas = gachas.filter(function(i) { return i.id !== id; });
+            localStorage.setItem('gachas', JSON.stringify(gachas));
+            renderGachas();
+        }
+    </script>
+</body>
+</html>

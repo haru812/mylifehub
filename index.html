@@ -32,13 +32,32 @@
             <button type="button" onclick="switchTab('shift')" id="btn-shift" class="tab-btn tab-active px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap">💼 バイト給料</button>
             <button type="button" onclick="switchTab('money')" id="btn-money" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">💰 家計簿</button>
             <button type="button" onclick="switchTab('tasks')" id="btn-tasks" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">📝 課題一覧</button>
-            <button type="button" onclick="switchTab('goods')" id="btn-goods" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎀 グッズ管理</button>
+            <button type="button" onclick="switchTab('goods')" id="btn-goods" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">📦 グッズ管理</button>
+            <button type="button" onclick="switchTab('ticket')" id="btn-ticket" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎟️ チケット・遠征</button>
             <button type="button" onclick="switchTab('gacha')" id="btn-gacha" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎰 ガチャ・買い物</button>
         </div>
     </nav>
 
     <!-- メインコンテンツ -->
-    <main class="max-w-5xl mx-auto px-4 mt-6">
+    <main class="max-w-5xl mx-auto px-4 mt-6 space-y-6">
+
+        <!-- 🎂 推しカウントダウンバナー -->
+        <div class="bg-gradient-to-r from-pink-100 to-purple-100 p-4 rounded-3xl shadow-sm border border-pink-200 flex flex-col sm:flex-row justify-between items-center gap-3">
+            <div class="flex items-center gap-3 w-full sm:w-auto">
+                <span class="text-2xl">🎂</span>
+                <div class="flex-1 sm:flex-initial">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <input type="text" id="oshi-name-input" value="推し" onchange="saveOshiInfo()" class="bg-white/70 border border-pink-300 rounded-lg px-2 py-0.5 text-xs font-bold text-[#6E5750] w-28">
+                        <span class="text-xs font-bold text-[#6E5750]">の誕生日・記念日まで</span>
+                    </div>
+                    <div class="text-xs text-gray-600 mt-1">日付: <input type="date" id="oshi-date-input" onchange="saveOshiInfo()" class="bg-white/70 border border-pink-300 rounded-lg px-2 py-0.5 text-xs font-bold text-[#6E5750]"></div>
+                </div>
+            </div>
+            <div class="bg-white px-5 py-2 rounded-2xl shadow-sm border border-pink-200 text-center w-full sm:w-auto">
+                <span class="text-[10px] font-bold text-gray-400 block">カウントダウン</span>
+                <span class="text-lg font-extrabold text-pink-600" id="oshi-countdown-display">あと -- 日</span>
+            </div>
+        </div>
 
         <!-- ================= 1. バイト給料 ================= -->
         <div id="tab-shift" class="tab-content space-y-6">
@@ -83,11 +102,21 @@
             </div>
         </div>
 
-        <!-- ================= 2. 家計簿 ================= -->
+        <!-- ================= 2. 家計簿（シフト給料連動つき） ================= -->
         <div id="tab-money" class="tab-content hidden space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6] space-y-4">
                     <h3 class="font-bold text-[#6E5750]">🟢 メイン口座 ＆ 週予算</h3>
+                    
+                    <!-- 🔗 バイト給料の自動連動表示 -->
+                    <div class="flex justify-between items-center bg-[#F0F8F1] p-3 rounded-xl border border-green-200">
+                        <div>
+                            <span class="text-xs font-bold text-green-700 block">💼 バイト給料の自動連動</span>
+                            <span class="text-[9px] text-gray-500 font-bold">シフトから自動計算（今月見込み）</span>
+                        </div>
+                        <span class="font-extrabold text-green-700 text-base" id="linked-wage-display">¥ 0</span>
+                    </div>
+
                     <div class="flex justify-between items-center bg-[#FAF7F2] p-3 rounded-xl">
                         <span class="text-xs font-bold text-[#8C736A]">メイン口座残高</span>
                         <input type="number" id="main-account" onchange="saveAccounts()" class="w-32 bg-white border border-[#D5C5B9] rounded-lg px-2 py-1 text-right font-bold text-sm" value="50000">
@@ -184,37 +213,27 @@
             </div>
         </div>
 
-        <!-- ================= 4. グッズ管理（パワーアップ版） ================= -->
+        <!-- ================= 4. グッズ管理（予約・発送待ち専用） ================= -->
         <div id="tab-goods" class="tab-content hidden space-y-6">
-            
-            <!-- カウンター＆合計金額サマリー -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
                     <div>
-                        <span class="text-xs font-bold text-[#8C736A] block">登録グッズ総数</span>
+                        <span class="text-xs font-bold text-[#8C736A] block">予約・発送待ちの総数</span>
                         <span class="text-xl font-extrabold text-[#6E5750]" id="goods-total-count">0 個</span>
                     </div>
                     <span class="text-2xl">📦</span>
                 </div>
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
                     <div>
-                        <span class="text-xs font-bold text-[#8C736A] block">予約中・欲しいもの合計金額</span>
+                        <span class="text-xs font-bold text-[#8C736A] block">予約グッズ合計金額</span>
                         <span class="text-xl font-extrabold text-pink-600" id="goods-total-price">¥ 0</span>
                     </div>
                     <span class="text-2xl">💰</span>
                 </div>
-                <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
-                    <div>
-                        <span class="text-xs font-bold text-[#8C736A] block">ステータス</span>
-                        <span class="text-xs font-bold text-green-700 bg-green-100 px-2.5 py-1 rounded-full">ウィッシュリスト稼働中</span>
-                    </div>
-                    <span class="text-2xl">🎀</span>
-                </div>
             </div>
 
-            <!-- グッズ登録フォーム -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎀 欲しいもの・予約グッズを追加</h2>
+                <h2 class="text-lg font-bold text-[#6E5750] mb-4">📦 予約・発送待ちグッズを追加</h2>
                 <form id="goods-form" onsubmit="addGoods(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input type="text" id="g-name" required placeholder="グッズ名（例: 〇〇のアクスタ）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
                     
@@ -225,11 +244,6 @@
                         <option value="💿 CD・BD">💿 CD・BD</option>
                         <option value="🃏 紙類・トレカ">🃏 紙類・トレカ</option>
                         <option value="✨ その他">✨ その他</option>
-                    </select>
-
-                    <select id="g-status" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
-                        <option value="📦 予約・発送待ち">📦 予約・発送待ち</option>
-                        <option value="🥺 欲しい">🥺 欲しい</option>
                     </select>
 
                     <input type="number" id="g-price" placeholder="価格（円）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
@@ -243,21 +257,11 @@
                 </form>
             </div>
 
-            <!-- 検索 ＆ フィルターエリア -->
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
                 <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
-                    <h3 class="text-lg font-bold text-[#6E5750] whitespace-nowrap">🖼️ ウィッシュリスト一覧</h3>
-                    
-                    <!-- キーワード検索バー -->
+                    <h3 class="text-lg font-bold text-[#6E5750] whitespace-nowrap">🖼️ 予約・発送待ち一覧</h3>
                     <div class="w-full md:w-72">
                         <input type="text" id="goods-search" oninput="renderGoods()" placeholder="🔍 グッズ名で検索..." class="w-full bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-3 py-1.5 text-xs focus:outline-none">
-                    </div>
-
-                    <!-- フィルターボタン -->
-                    <div class="flex gap-2 overflow-x-auto w-full md:w-auto pb-2">
-                        <button type="button" onclick="filterGoods('all')" id="goods-filter-all" class="goods-filter-btn filter-btn-active px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] whitespace-nowrap">すべて</button>
-                        <button type="button" onclick="filterGoods('📦 予約・発送待ち')" id="goods-filter-wait" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">📦 予約中</button>
-                        <button type="button" onclick="filterGoods('🥺 欲しい')" id="goods-filter-want" class="goods-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🥺 欲しい</button>
                     </div>
                 </div>
                 
@@ -265,7 +269,48 @@
             </div>
         </div>
 
-        <!-- ================= 5. ガチャ・買い物メモ ================= -->
+        <!-- ================= 5. チケット・遠征管理（新機能） ================= -->
+        <div id="tab-ticket" class="tab-content hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-[#8C736A] block">遠征・チケット登録数</span>
+                        <span class="text-xl font-extrabold text-[#6E5750]" id="ticket-total-count">0 件</span>
+                    </div>
+                    <span class="text-2xl">🎟️</span>
+                </div>
+                <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
+                    <div>
+                        <span class="text-xs font-bold text-[#8C736A] block">チケット・遠征費用 合計</span>
+                        <span class="text-xl font-extrabold text-pink-600" id="ticket-total-price">¥ 0</span>
+                    </div>
+                    <span class="text-2xl">💰</span>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
+                <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎟️ チケット・遠征予定を追加</h2>
+                <form id="ticket-form" onsubmit="addTicket(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <input type="text" id="t-name" required placeholder="イベント名（例: 〇〇 1st LIVE）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
+                    <input type="date" id="t-date" required class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
+                    <select id="t-status" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
+                        <option value="🎟️ 当落待ち">🎟️ 当落待ち</option>
+                        <option value="💳 入金待ち">💳 入金待ち</option>
+                        <option value="🎫 発券済">🎫 発券済</option>
+                        <option value="🌟 参戦決定!">🌟 参戦決定!</option>
+                    </select>
+                    <input type="number" id="t-price" placeholder="費用（チケット代・遠征費など）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm md:col-span-2">
+                    <button type="submit" class="md:col-span-3 w-full bg-[#6E5750] text-white font-bold py-3 rounded-xl hover:bg-[#58443E] transition shadow">予定を追加する</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
+                <h3 class="text-lg font-bold text-[#6E5750] mb-4">📅 チケット・遠征スケジュール一覧</h3>
+                <div id="ticket-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </div>
+
+        <!-- ================= 6. ガチャ・買い物メモ（2列対応版） ================= -->
         <div id="tab-gacha" class="tab-content hidden space-y-6">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
                 <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎰 ガチャ・買い物メモを追加</h2>
@@ -298,7 +343,7 @@
                         <button type="button" onclick="filterGacha('✨ その他')" id="filter-other" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">✨ その他</button>
                     </div>
                 </div>
-                <div id="gacha-grid" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+                <div id="gacha-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"></div>
             </div>
         </div>
 
@@ -426,7 +471,6 @@
 
     <!-- JavaScript ロジック -->
     <script>
-        var currentGoodsFilter = 'all';
         var currentGachaFilter = 'all';
         var currentShiftDate = new Date();
         var selectedShiftDateStr = null;
@@ -436,6 +480,7 @@
         var moneys = JSON.parse(localStorage.getItem('moneys')) || [];
         var goods = JSON.parse(localStorage.getItem('goods')) || [];
         var gachas = JSON.parse(localStorage.getItem('gachas')) || [];
+        var tickets = JSON.parse(localStorage.getItem('tickets')) || [];
 
         function switchTab(tabId) {
             var contents = document.querySelectorAll('.tab-content');
@@ -482,6 +527,46 @@
         function openMoneyModal() { document.getElementById('money-modal').classList.remove('hidden'); }
         function closeMoneyModal() { document.getElementById('money-modal').classList.add('hidden'); }
 
+        // --- 推しカウントダウン設定 ---
+        function saveOshiInfo() {
+            var name = document.getElementById('oshi-name-input').value;
+            var date = document.getElementById('oshi-date-input').value;
+            localStorage.setItem('oshiName', name);
+            localStorage.setItem('oshiDate', date);
+            updateOshiCountdown();
+        }
+
+        function updateOshiCountdown() {
+            var name = localStorage.getItem('oshiName');
+            var dateStr = localStorage.getItem('oshiDate');
+            if (name && document.getElementById('oshi-name-input')) {
+                document.getElementById('oshi-name-input').value = name;
+            }
+            if (dateStr && document.getElementById('oshi-date-input')) {
+                document.getElementById('oshi-date-input').value = dateStr;
+            }
+
+            var display = document.getElementById('oshi-countdown-display');
+            if (!display || !dateStr) {
+                if (display) display.innerText = '日付未設定';
+                return;
+            }
+
+            var now = new Date();
+            now.setHours(0, 0, 0, 0);
+            var target = new Date(dateStr);
+            target.setHours(0, 0, 0, 0);
+
+            target.setFullYear(now.getFullYear());
+            if (target < now) {
+                target.setFullYear(now.getFullYear() + 1);
+            }
+
+            var diffTime = target - now;
+            var diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            display.innerText = 'あと ' + diffDays + ' 日';
+        }
+
         // 月初めの自動積立
         function checkMonthlySavings() {
             var now = new Date();
@@ -514,10 +599,12 @@
                 if (document.getElementById('weekly-budget-limit')) document.getElementById('weekly-budget-limit').value = localStorage.getItem('weeklyLimit') || 10000;
                 
                 checkMonthlySavings();
+                updateOshiCountdown();
                 renderShiftCalendar();
                 renderTasks();
                 renderMoneys();
                 renderGoods();
+                renderTickets();
                 renderGachas();
             } catch (err) {
                 console.error(err);
@@ -549,6 +636,7 @@
             
             selectedShiftDateStr = date;
             renderShiftCalendar();
+            renderMoneys();
             showSelectedDateShifts(date);
         }
 
@@ -580,6 +668,19 @@
                 var after18 = Math.max(0, endMins - Math.max(startMins, borderMins)) * breakRatio;
                 return Math.floor((before18 / 60 * 1200) + (after18 / 60 * 1250));
             }
+        }
+
+        // 🔗 バイト給料の自動計算
+        function getCurrentMonthWage() {
+            var now = new Date();
+            var ymPrefix = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
+            var monthWage = 0;
+            schedules.forEach(function(s) {
+                if (s.date && s.date.indexOf(ymPrefix) === 0) {
+                    monthWage += calculateWage(s);
+                }
+            });
+            return monthWage;
         }
 
         function renderShiftCalendar() {
@@ -670,6 +771,7 @@
             schedules = schedules.filter(function(i) { return i.id !== id; });
             localStorage.setItem('schedules', JSON.stringify(schedules));
             renderShiftCalendar();
+            renderMoneys();
             if (selectedShiftDateStr) showSelectedDateShifts(selectedShiftDateStr);
         }
 
@@ -736,6 +838,12 @@
                 list.appendChild(div);
             });
 
+            // 🔗 連携されたバイト給料を表示
+            var linkedWage = getCurrentMonthWage();
+            if (document.getElementById('linked-wage-display')) {
+                document.getElementById('linked-wage-display').innerText = '¥ ' + linkedWage.toLocaleString();
+            }
+
             var weeklyLimit = parseFloat(document.getElementById('weekly-budget-limit') ? document.getElementById('weekly-budget-limit').value : 10000) || 10000;
             if (document.getElementById('weekly-remaining-display')) document.getElementById('weekly-remaining-display').innerText = '¥ ' + (weeklyLimit - weeklySpent).toLocaleString();
             if (document.getElementById('total-credit-display')) document.getElementById('total-credit-display').innerText = '¥ ' + totalCredit.toLocaleString();
@@ -752,18 +860,17 @@
             renderMoneys();
         }
 
-        // --- グッズ管理（パワーアップ版：カテゴリ・検索・カウンター・金額合計） ---
+        // --- グッズ管理 ---
         function addGoods(e) {
             e.preventDefault();
             var name = document.getElementById('g-name').value;
             var category = document.getElementById('g-category').value;
-            var status = document.getElementById('g-status').value;
             var price = parseFloat(document.getElementById('g-price').value) || 0;
             var url = document.getElementById('g-url').value;
             var fileInput = document.getElementById('g-file');
 
             var saveItem = function(imageUrl) {
-                goods.push({ id: Date.now(), name: name, category: category, status: status, price: price, url: imageUrl });
+                goods.push({ id: Date.now(), name: name, category: category, status: '📦 予約・発送待ち', price: price, url: imageUrl });
                 localStorage.setItem('goods', JSON.stringify(goods));
                 document.getElementById('goods-form').reset();
                 renderGoods();
@@ -778,34 +885,14 @@
             }
         }
 
-        function filterGoods(status) {
-            currentGoodsFilter = status;
-            var btns = document.querySelectorAll('.goods-filter-btn');
-            for (var i = 0; i < btns.length; i++) {
-                btns[i].classList.remove('filter-btn-active');
-                btns[i].classList.add('text-[#6E5750]');
-            }
-            if (status === 'all' && document.getElementById('goods-filter-all')) document.getElementById('goods-filter-all').classList.add('filter-btn-active');
-            else if (status === '📦 予約・発送待ち' && document.getElementById('goods-filter-wait')) document.getElementById('goods-filter-wait').classList.add('filter-btn-active');
-            else if (status === '🥺 欲しい' && document.getElementById('goods-filter-want')) document.getElementById('goods-filter-want').classList.add('filter-btn-active');
-
-            renderGoods();
-        }
-
         function renderGoods() {
             var grid = document.getElementById('goods-grid');
             if (!grid) return;
             grid.innerHTML = '';
 
             var searchKeyword = document.getElementById('goods-search') ? document.getElementById('goods-search').value.toLowerCase() : '';
+            var filtered = goods.filter(function(g) { return g.name.toLowerCase().indexOf(searchKeyword) !== -1; });
 
-            var filtered = goods.filter(function(g) {
-                var matchStatus = (currentGoodsFilter === 'all' || g.status === currentGoodsFilter);
-                var matchSearch = g.name.toLowerCase().indexOf(searchKeyword) !== -1;
-                return matchStatus && matchSearch;
-            });
-
-            // カウンターと合計金額の計算
             var totalPrice = 0;
             goods.forEach(function(g) { totalPrice += (g.price || 0); });
             if (document.getElementById('goods-total-count')) document.getElementById('goods-total-count').innerText = goods.length + ' 個';
@@ -814,7 +901,7 @@
             filtered.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'bg-[#FAF7F2] p-3 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-32 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Image\'"><div class="flex gap-1 flex-wrap mb-1"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.category + '</span><span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">' + item.status + '</span></div><h4 class="font-bold text-sm mt-1">' + item.name + '</h4><p class="text-xs text-gray-600 mt-0.5">💰 ' + (item.price ? item.price.toLocaleString() + '円' : '金額未設定') + '</p></div><button type="button" onclick="deleteGoods(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-2 text-right">削除（GET済！）</button>';
+                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-32 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Image\'"><div class="flex gap-1 flex-wrap mb-1"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.category + '</span><span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">📦 予約中</span></div><h4 class="font-bold text-sm mt-1">' + item.name + '</h4><p class="text-xs text-gray-600 mt-0.5">💰 ' + (item.price ? item.price.toLocaleString() + '円' : '金額未設定') + '</p></div><button type="button" onclick="deleteGoods(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-2 text-right">削除（届いた！）</button>';
                 grid.appendChild(div);
             });
         }
@@ -823,6 +910,44 @@
             goods = goods.filter(function(i) { return i.id !== id; });
             localStorage.setItem('goods', JSON.stringify(goods));
             renderGoods();
+        }
+
+        // --- 🎟️ チケット・遠征管理機能 ---
+        function addTicket(e) {
+            e.preventDefault();
+            var name = document.getElementById('t-name').value;
+            var date = document.getElementById('t-date').value;
+            var status = document.getElementById('t-status').value;
+            var price = parseFloat(document.getElementById('t-price').value) || 0;
+
+            tickets.push({ id: Date.now(), name: name, date: date, status: status, price: price });
+            localStorage.setItem('tickets', JSON.stringify(tickets));
+            document.getElementById('ticket-form').reset();
+            renderTickets();
+        }
+
+        function renderTickets() {
+            var grid = document.getElementById('ticket-grid');
+            if (!grid) return;
+            grid.innerHTML = '';
+
+            var totalPrice = 0;
+            tickets.forEach(function(t) { totalPrice += (t.price || 0); });
+            if (document.getElementById('ticket-total-count')) document.getElementById('ticket-total-count').innerText = tickets.length + ' 件';
+            if (document.getElementById('ticket-total-price')) document.getElementById('ticket-total-price').innerText = '¥ ' + totalPrice.toLocaleString();
+
+            tickets.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(item) {
+                var div = document.createElement('div');
+                div.className = 'bg-[#FAF7F2] p-4 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
+                div.innerHTML = '<div><div class="flex justify-between items-center mb-2"><span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">' + item.status + '</span><span class="text-xs text-gray-500 font-bold">📅 ' + item.date + '</span></div><h4 class="font-bold text-sm text-[#6E5750]">' + item.name + '</h4><p class="text-xs text-gray-600 mt-1">💰 費用: ' + (item.price ? item.price.toLocaleString() + '円' : '未設定') + '</p></div><button type="button" onclick="deleteTicket(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除</button>';
+                grid.appendChild(div);
+            });
+        }
+
+        function deleteTicket(id) {
+            tickets = tickets.filter(function(i) { return i.id !== id; });
+            localStorage.setItem('tickets', JSON.stringify(tickets));
+            renderTickets();
         }
 
         // --- ガチャ・買い物メモ ---
@@ -868,8 +993,8 @@
 
             filtered.forEach(function(item) {
                 var div = document.createElement('div');
-                div.className = 'bg-[#FAF7F2] p-4 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-36 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Gacha\'"><span class="text-xs bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.genre + '</span><h4 class="font-bold text-sm mt-1">' + item.name + '</h4><p class="text-xs text-gray-600 mt-1">💰 ' + (item.price ? item.price + '円' : '金額未設定') + ' / 📅 ' + (item.date || '予定なし') + '</p></div><button type="button" onclick="deleteGacha(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除・GET済</button>';
+                div.className = 'bg-[#FAF7F2] p-3 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
+                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-28 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Gacha\'"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.genre + '</span><h4 class="font-bold text-xs sm:text-sm mt-1">' + item.name + '</h4><p class="text-[11px] text-gray-600 mt-1">💰 ' + (item.price ? item.price + '円' : '金額未設定') + '<br>📅 ' + (item.date || '予定なし') + '</p></div><button type="button" onclick="deleteGacha(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除・GET済</button>';
                 grid.appendChild(div);
             });
         }

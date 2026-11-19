@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Life Hub - マイライフハブ</title>
+    <title>最強メモ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1p:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
@@ -21,20 +21,20 @@
     <!-- ヘッダー -->
     <header class="bg-[#6E5750] text-white py-4 px-6 shadow-md">
         <div class="max-w-5xl mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold tracking-wider">🌸 My Life Hub</h1>
-            <span class="text-xs bg-[#8C736A] px-3 py-1 rounded-full">推し活 ＆ 大学生ライフ手帳</span>
+            <h1 class="text-2xl font-bold tracking-wider"> メモ </h1>
+            <span class="text-xs bg-[#8C736A] px-3 py-1 rounded-full">ライフ手帳</span>
         </div>
     </header>
 
     <!-- ナビゲーションタブ -->
     <nav class="max-w-5xl mx-auto px-4 mt-6">
         <div class="flex overflow-x-auto gap-2 bg-[#EFECE6] p-2 rounded-2xl shadow-inner">
-            <button type="button" onclick="switchTab('shift')" id="btn-shift" class="tab-btn tab-active px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap">💼 バイト給料</button>
-            <button type="button" onclick="switchTab('money')" id="btn-money" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">💰 家計簿</button>
-            <button type="button" onclick="switchTab('tasks')" id="btn-tasks" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">📝 課題一覧</button>
-            <button type="button" onclick="switchTab('goods')" id="btn-goods" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">📦 グッズ管理</button>
-            <button type="button" onclick="switchTab('ticket')" id="btn-ticket" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎟️ チケット・遠征</button>
-            <button type="button" onclick="switchTab('gacha')" id="btn-gacha" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]">🎰 ガチャ・買い物</button>
+            <button type="button" onclick="switchTab('shift')" id="btn-shift" class="tab-btn tab-active px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap"> バイト給料</button>
+            <button type="button" onclick="switchTab('money')" id="btn-money" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]"> 家計簿</button>
+            <button type="button" onclick="switchTab('tasks')" id="btn-tasks" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]"> 課題一覧</button>
+            <button type="button" onclick="switchTab('goods')" id="btn-goods" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]"> グッズ管理</button>
+            <button type="button" onclick="switchTab('ticket')" id="btn-ticket" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]"> チケット・遠征</button>
+            <button type="button" onclick="switchTab('gacha')" id="btn-gacha" class="tab-btn px-4 py-2 rounded-xl font-medium text-sm transition whitespace-nowrap text-[#6E5750]"> ガチャ・買い物</button>
         </div>
     </nav>
 
@@ -49,13 +49,13 @@
                     <span class="text-2xl font-extrabold text-[#6E5750]" id="total-wage-display">¥ 0</span>
                 </div>
                 <button type="button" onclick="openScheduleModal()" class="w-full sm:w-auto bg-[#6E5750] text-white font-bold px-5 py-3 rounded-2xl hover:bg-[#58443E] transition shadow text-sm">
-                    ✨ ＋ バイトシフトを追加
+                     ＋ バイトシフトを追加
                 </button>
             </div>
 
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] max-w-xl mx-auto">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-base font-bold text-[#6E5750]" id="shift-cal-title">📅 カレンダー</h3>
+                    <h3 class="text-base font-bold text-[#6E5750]" id="shift-cal-title"> カレンダー</h3>
                     <div class="flex gap-1.5">
                         <button type="button" onclick="changeShiftMonth(-1)" class="px-2.5 py-1 bg-[#F5F0EB] rounded-lg text-xs font-bold text-[#6E5750]">◀ 前月</button>
                         <button type="button" onclick="changeShiftMonth(1)" class="px-2.5 py-1 bg-[#F5F0EB] rounded-lg text-xs font-bold text-[#6E5750]">次月 ▶</button>
@@ -74,7 +74,7 @@
 
                 <div class="mt-4 pt-4 border-t border-[#EFECE6]">
                     <div class="flex justify-between items-center mb-2">
-                        <h4 class="text-xs font-bold text-[#8C736A]" id="selected-shift-date-label">📌 日付をタップして詳細を確認</h4>
+                        <h4 class="text-xs font-bold text-[#8C736A]" id="selected-shift-date-label"> 日付をタップして詳細を確認</h4>
                         <button type="button" onclick="openScheduleModalWithDate()" id="btn-add-selected-date" class="hidden text-xs bg-[#EFECE6] text-[#6E5750] font-bold px-2.5 py-1 rounded-lg hover:bg-[#E2DCD2]">＋ この日に追加</button>
                     </div>
                     <div id="selected-day-shifts" class="space-y-2">
@@ -86,7 +86,7 @@
             <!-- バイトテンプレ管理カード -->
             <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] max-w-xl mx-auto space-y-4">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-sm font-bold text-[#6E5750]">⚡ よく使うシフトテンプレ</h3>
+                    <h3 class="text-sm font-bold text-[#6E5750]"> よく使うシフトテンプレ</h3>
                     <button type="button" onclick="resetDefaultTemplates()" class="text-[11px] text-[#8C736A] underline hover:text-[#6E5750]">初期テンプレを復元</button>
                 </div>
 
@@ -119,7 +119,7 @@
                     
                     <div class="flex justify-between items-center bg-[#F0F8F1] p-3 rounded-xl border border-green-200">
                         <div>
-                            <span class="text-xs font-bold text-green-700 block">💼 バイト給料の自動連動</span>
+                            <span class="text-xs font-bold text-green-700 block"> バイト給料の自動連動</span>
                             <span class="text-[9px] text-gray-500 font-bold">シフトから自動計算（今月見込み）</span>
                         </div>
                         <span class="font-extrabold text-green-700 text-base" id="linked-wage-display">¥ 0</span>
@@ -174,15 +174,15 @@
             </div>
 
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
-                <h3 class="font-bold text-[#6E5750]">💸 家計簿の記録</h3>
+                <h3 class="font-bold text-[#6E5750]"> 家計簿の記録</h3>
                 <button type="button" onclick="openMoneyModal()" class="bg-[#6E5750] text-white font-bold px-5 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm flex items-center gap-2">
-                    <span>✨ ＋ 支出・収入を記録する</span>
+                    <span> ＋ 支出・収入を記録する</span>
                 </button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                    <h3 class="font-bold text-[#6E5750] mb-4">📊 月末比較（推し活 あり vs なし）</h3>
+                    <h3 class="font-bold text-[#6E5750] mb-4"> 月末比較（推し活 あり vs なし）</h3>
                     <div class="space-y-3 text-sm">
                         <div class="flex justify-between p-3 bg-[#FAF7F2] rounded-xl">
                             <span>推し活込みの総支出</span>
@@ -193,14 +193,14 @@
                             <span class="font-bold text-green-700" id="sum-without-oshi">¥ 0</span>
                         </div>
                         <div class="flex justify-between p-3 bg-[#F5F0EB] rounded-xl border border-[#D5C5B9]">
-                            <span class="font-bold">✨ 推しに使った金額</span>
+                            <span class="font-bold"> 推しに使った金額</span>
                             <span class="font-extrabold text-pink-600" id="sum-only-oshi">¥ 0</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                    <h3 class="font-bold text-[#6E5750] mb-4">📜 家計簿の履歴</h3>
+                    <h3 class="font-bold text-[#6E5750] mb-4"> 家計簿の履歴</h3>
                     <div id="money-list" class="space-y-2 max-h-60 overflow-y-auto"></div>
                 </div>
             </div>
@@ -209,14 +209,14 @@
         <!-- ================= 3. 課題一覧 ================= -->
         <div id="tab-tasks" class="tab-content hidden space-y-6">
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
-                <h3 class="font-bold text-[#6E5750]">📝 課題管理</h3>
+                <h3 class="font-bold text-[#6E5750]"> 課題管理</h3>
                 <button type="button" onclick="openTaskModal()" class="bg-[#6E5750] text-white font-bold px-5 py-2.5 rounded-2xl hover:bg-[#58443E] transition shadow text-sm flex items-center gap-2">
-                    <span>✨ ＋ 新しい課題を追加</span>
+                    <span> ＋ 新しい課題を追加</span>
                 </button>
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h3 class="text-lg font-bold text-[#6E5750] mb-4">🔥 締め切りが近い順（自動並び替え）</h3>
+                <h3 class="text-lg font-bold text-[#6E5750] mb-4"> 締め切りが近い順（自動並び替え）</h3>
                 <div id="task-list" class="space-y-3"></div>
             </div>
         </div>
@@ -229,29 +229,29 @@
                         <span class="text-xs font-bold text-[#8C736A] block">予約・発送待ちの総数</span>
                         <span class="text-xl font-extrabold text-[#6E5750]" id="goods-total-count">0 個</span>
                     </div>
-                    <span class="text-2xl">📦</span>
+                    <span class="text-2xl"></span>
                 </div>
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
                     <div>
                         <span class="text-xs font-bold text-[#8C736A] block">予約グッズ合計金額</span>
                         <span class="text-xl font-extrabold text-pink-600" id="goods-total-price">¥ 0</span>
                     </div>
-                    <span class="text-2xl">💰</span>
+                    <span class="text-2xl"></span>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h2 class="text-lg font-bold text-[#6E5750] mb-4">📦 予約・発送待ちグッズを追加</h2>
+                <h2 class="text-lg font-bold text-[#6E5750] mb-4"> 予約・発送待ちグッズを追加</h2>
                 <form id="goods-form" onsubmit="addGoods(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input type="text" id="g-name" required placeholder="グッズ名（例: 〇〇のアクスタ）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
                     
                     <select id="g-category" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
-                        <option value="🌟 アクスタ">🌟 アクスタ</option>
-                        <option value="🔘 缶バッジ">🔘 缶バッジ</option>
-                        <option value="🧸 ぬいぐるみ">🧸 ぬいぐるみ</option>
-                        <option value="💿 CD・BD">💿 CD・BD</option>
-                        <option value="🃏 紙類・トレカ">🃏 紙類・トレカ</option>
-                        <option value="✨ その他">✨ その他</option>
+                        <option value=" アクスタ"> アクスタ</option>
+                        <option value=" 缶バッジ"> 缶バッジ</option>
+                        <option value=" ぬいぐるみ"> ぬいぐるみ</option>
+                        <option value=" CD・BD"> CD・BD</option>
+                        <option value=" 紙類・トレカ"> 紙類・トレカ</option>
+                        <option value=" その他"> その他</option>
                     </select>
 
                     <input type="number" id="g-price" placeholder="価格（円）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
@@ -267,9 +267,9 @@
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
                 <div class="flex flex-col md:flex-row items-center justify-between mb-4 gap-4">
-                    <h3 class="text-lg font-bold text-[#6E5750] whitespace-nowrap">🖼️ 予約・発送待ち一覧</h3>
+                    <h3 class="text-lg font-bold text-[#6E5750] whitespace-nowrap"> 予約・発送待ち一覧</h3>
                     <div class="w-full md:w-72">
-                        <input type="text" id="goods-search" oninput="renderGoods()" placeholder="🔍 グッズ名で検索..." class="w-full bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-3 py-1.5 text-xs focus:outline-none">
+                        <input type="text" id="goods-search" oninput="renderGoods()" placeholder=" グッズ名で検索..." class="w-full bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-3 py-1.5 text-xs focus:outline-none">
                     </div>
                 </div>
                 
@@ -285,27 +285,27 @@
                         <span class="text-xs font-bold text-[#8C736A] block">遠征・チケット登録数</span>
                         <span class="text-xl font-extrabold text-[#6E5750]" id="ticket-total-count">0 件</span>
                     </div>
-                    <span class="text-2xl">🎟️</span>
+                    <span class="text-2xl"></span>
                 </div>
                 <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] flex justify-between items-center">
                     <div>
                         <span class="text-xs font-bold text-[#8C736A] block">チケット・遠征費用 合計</span>
                         <span class="text-xl font-extrabold text-pink-600" id="ticket-total-price">¥ 0</span>
                     </div>
-                    <span class="text-2xl">💰</span>
+                    <span class="text-2xl"></span>
                 </div>
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎟️ チケット・遠征予定を追加</h2>
+                <h2 class="text-lg font-bold text-[#6E5750] mb-4"> チケット・遠征予定を追加</h2>
                 <form id="ticket-form" onsubmit="addTicket(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input type="text" id="t-name" required placeholder="イベント名（例: 〇〇 1st LIVE）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
                     <input type="date" id="t-date" required class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
                     <select id="t-status" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
-                        <option value="🎟️ 当落待ち">🎟️ 当落待ち</option>
-                        <option value="💳 入金待ち">💳 入金待ち</option>
-                        <option value="🎫 発券済">🎫 発券済</option>
-                        <option value="🌟 参戦決定!">🌟 参戦決定!</option>
+                        <option value=" 当落待ち"> 当落待ち</option>
+                        <option value=" 入金待ち"> 入金待ち</option>
+                        <option value=" 発券済"> 発券済</option>
+                        <option value=" 参戦決定!"> 参戦決定!</option>
                     </select>
                     <input type="number" id="t-price" placeholder="費用（チケット代・遠征費など）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm md:col-span-2">
                     <button type="submit" class="md:col-span-3 w-full bg-[#6E5750] text-white font-bold py-3 rounded-xl hover:bg-[#58443E] transition shadow">予定を追加する</button>
@@ -313,7 +313,7 @@
             </div>
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h3 class="text-lg font-bold text-[#6E5750] mb-4">📅 チケット・遠征スケジュール一覧</h3>
+                <h3 class="text-lg font-bold text-[#6E5750] mb-4"> チケット・遠征スケジュール一覧</h3>
                 <div id="ticket-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
             </div>
         </div>
@@ -321,14 +321,14 @@
         <!-- ================= 6. ガチャ・買い物メモ（2列対応版） ================= -->
         <div id="tab-gacha" class="tab-content hidden space-y-6">
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
-                <h2 class="text-lg font-bold text-[#6E5750] mb-4">🎰 ガチャ・買い物メモを追加</h2>
+                <h2 class="text-lg font-bold text-[#6E5750] mb-4"> ガチャ・買い物メモを追加</h2>
                 <form id="gacha-form" onsubmit="addGacha(event)" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <input type="text" id="ga-name" required placeholder="商品名（例: 推しカプセルフィギュア）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
                     <select id="ga-genre" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
-                        <option value="🎰 ガチャガチャ">🎰 ガチャガチャ</option>
-                        <option value="🛍️ コスメ・日用品">🛍️ コスメ・日用品</option>
-                        <option value="📚 本・文房具">📚 本・文房具</option>
-                        <option value="✨ その他">✨ その他</option>
+                        <option value=" ガチャガチャ"> ガチャガチャ</option>
+                        <option value=" コスメ・日用品"> コスメ・日用品</option>
+                        <option value=" 本・文房具"> 本・文房具</option>
+                        <option value=" その他"> その他</option>
                     </select>
                     <input type="number" id="ga-price" placeholder="金額（例: 500円）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
                     <input type="text" id="ga-date" placeholder="発売予定 / 期限（例: 11月中旬）" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm">
@@ -342,13 +342,13 @@
 
             <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6]">
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
-                    <h3 class="text-lg font-bold text-[#6E5750]">🛒 ほしいものリスト</h3>
+                    <h3 class="text-lg font-bold text-[#6E5750]"> ほしいものリスト</h3>
                     <div class="flex gap-2 overflow-x-auto w-full pb-2">
                         <button type="button" onclick="filterGacha('all')" id="filter-all" class="gacha-filter-btn filter-btn-active px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] whitespace-nowrap">すべて</button>
-                        <button type="button" onclick="filterGacha('🎰 ガチャガチャ')" id="filter-gacha" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🎰 ガチャガチャ</button>
-                        <button type="button" onclick="filterGacha('🛍️ コスメ・日用品')" id="filter-cosme" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">🛍️ コスメ・日用品</button>
-                        <button type="button" onclick="filterGacha('📚 本・文房具')" id="filter-book" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">📚 本・文房具</button>
-                        <button type="button" onclick="filterGacha('✨ その他')" id="filter-other" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap">✨ その他</button>
+                        <button type="button" onclick="filterGacha(' ガチャガチャ')" id="filter-gacha" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap"> ガチャガチャ</button>
+                        <button type="button" onclick="filterGacha(' コスメ・日用品')" id="filter-cosme" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap"> コスメ・日用品</button>
+                        <button type="button" onclick="filterGacha(' 本・文房具')" id="filter-book" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap"> 本・文房具</button>
+                        <button type="button" onclick="filterGacha(' その他')" id="filter-other" class="gacha-filter-btn px-3 py-1 rounded-xl text-xs font-bold border border-[#D5C5B9] text-[#6E5750] whitespace-nowrap"> その他</button>
                     </div>
                 </div>
                 <div id="gacha-grid" class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4"></div>
@@ -361,13 +361,13 @@
     <div id="schedule-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white p-6 rounded-3xl shadow-xl max-w-lg w-full max-h-[90vh] overflow-y-auto space-y-4 border border-[#EFECE6]">
             <div class="flex justify-between items-center border-b pb-3 border-[#EFECE6]">
-                <h3 class="text-lg font-bold text-[#6E5750]">💼 バイトシフトを追加</h3>
+                <h3 class="text-lg font-bold text-[#6E5750]"> バイトシフトを追加</h3>
                 <button type="button" onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
             </div>
 
             <!-- モーダル内テンプレ呼び出しバー -->
             <div class="bg-[#FAF7F2] p-3 rounded-2xl border border-[#EFECE6] space-y-2">
-                <span class="text-[11px] font-bold text-[#8C736A] block">⚡ テンプレから自動入力</span>
+                <span class="text-[11px] font-bold text-[#8C736A] block"> テンプレから自動入力</span>
                 <div id="modal-template-buttons" class="flex flex-wrap gap-1.5"></div>
             </div>
 
@@ -413,7 +413,7 @@
     <div id="task-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white p-6 rounded-3xl shadow-xl max-w-md w-full space-y-4 border border-[#EFECE6]">
             <div class="flex justify-between items-center border-b pb-3 border-[#EFECE6]">
-                <h3 class="text-lg font-bold text-[#6E5750]">📝 新しい課題を追加</h3>
+                <h3 class="text-lg font-bold text-[#6E5750]"> 新しい課題を追加</h3>
                 <button type="button" onclick="closeTaskModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
             </div>
             <form id="task-form" onsubmit="addTask(event)" class="space-y-3">
@@ -440,7 +440,7 @@
     <div id="money-modal" class="fixed inset-0 bg-black/50 hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white p-6 rounded-3xl shadow-xl max-w-md w-full space-y-4 border border-[#EFECE6]">
             <div class="flex justify-between items-center border-b pb-3 border-[#EFECE6]">
-                <h3 class="text-lg font-bold text-[#6E5750]">💸 支出・収入を記録する</h3>
+                <h3 class="text-lg font-bold text-[#6E5750]"> 支出・収入を記録する</h3>
                 <button type="button" onclick="closeMoneyModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
             </div>
             <form id="money-form" onsubmit="addMoney(event)" class="space-y-3">
@@ -455,25 +455,25 @@
                 <div>
                     <label class="block text-xs font-bold text-[#8C736A] mb-1">カテゴリー</label>
                     <select id="m-category" class="w-full bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm focus:outline-none">
-                        <option value="💖 推し活">💖 推し活</option>
-                        <option value="🎰 ガチャガチャ">🎰 ガチャガチャ</option>
-                        <option value="👭 友達と遊んだ">👭 友達と遊んだ</option>
-                        <option value="☕️ カフェ・外食">☕️ カフェ・外食</option>
-                        <option value="👗 ファッション・美容">👗 ファッション・美容</option>
-                        <option value="🚃 交通費">🚃 交通費</option>
-                        <option value="📚 勉強・大学">📚 勉強・大学</option>
-                        <option value="🛍️ 日用品">🛍️ 日用品</option>
-                        <option value="💰 バイト収入">💰 バイト収入 (プラス)</option>
+                        <option value=" 推し活"> 推し活</option>
+                        <option value=" ガチャガチャ"> ガチャガチャ</option>
+                        <option value=" 友達と遊んだ"> 友達と遊んだ</option>
+                        <option value=" カフェ・外食"> カフェ・外食</option>
+                        <option value=" ファッション・美容"> ファッション・美容</option>
+                        <option value=" 交通費"> 交通費</option>
+                        <option value=" 勉強・大学"> 勉強・大学</option>
+                        <option value=" 日用品"> 日用品</option>
+                        <option value=" バイト収入"> バイト収入 (プラス)</option>
                     </select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-[#8C736A] mb-1">支払い方法</label>
                     <select id="m-payment" class="w-full bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-4 py-2 text-sm focus:outline-none">
-                        <option value="現金">💵 現金</option>
-                        <option value="クレカ">💳 クレジットカード（後払い）</option>
-                        <option value="デビット">💳 デビットカード（即時引き落とし）</option>
-                        <option value="PayPay">📱 PayPay</option>
-                        <option value="d払い">📱 d払い</option>
+                        <option value="現金"> 現金</option>
+                        <option value="クレカ"> クレジットカード（後払い）</option>
+                        <option value="デビット"> デビットカード（即時引き落とし）</option>
+                        <option value="PayPay"> PayPay</option>
+                        <option value="d払い"> d払い</option>
                     </select>
                 </div>
                 <div class="flex flex-col gap-2 pt-2">
@@ -793,7 +793,7 @@
             var month = currentShiftDate.getMonth();
             var ymPrefix = year + '-' + String(month + 1).padStart(2, '0');
 
-            if (document.getElementById('shift-cal-title')) document.getElementById('shift-cal-title').innerText = '📅 ' + year + '年 ' + (month + 1) + '月';
+            if (document.getElementById('shift-cal-title')) document.getElementById('shift-cal-title').innerText = ' ' + year + '年 ' + (month + 1) + '月';
             if (document.getElementById('shift-month-wage-label')) document.getElementById('shift-month-wage-label').innerText = (month + 1) + '月のバイト給料見込み';
 
             var monthWage = 0;
@@ -846,7 +846,7 @@
         function showSelectedDateShifts(dateStr) {
             var container = document.getElementById('selected-day-shifts');
             if (!container) return;
-            if (document.getElementById('selected-shift-date-label')) document.getElementById('selected-shift-date-label').innerText = '📌 ' + dateStr + ' のシフト';
+            if (document.getElementById('selected-shift-date-label')) document.getElementById('selected-shift-date-label').innerText = ' ' + dateStr + ' のシフト';
             if (document.getElementById('btn-add-selected-date')) document.getElementById('btn-add-selected-date').classList.remove('hidden');
 
             var dayShifts = schedules.filter(function(s) { return s.date === dateStr; });
@@ -929,15 +929,15 @@
             var sumWithOshi = 0, sumWithoutOshi = 0, totalCredit = 0, weeklySpent = 0;
 
             moneys.slice().reverse().forEach(function(item) {
-                if (item.category !== '💰 バイト収入') {
+                if (item.category !== ' バイト収入') {
                     sumWithOshi += item.amount;
-                    if (item.category !== '💖 推し活' && item.category !== '🎰 ガチャガチャ') sumWithoutOshi += item.amount;
+                    if (item.category !== ' 推し活' && item.category !== ' ガチャガチャ') sumWithoutOshi += item.amount;
                     if (item.payment === 'クレカ') totalCredit += item.amount;
                     weeklySpent += item.amount;
                 }
                 var div = document.createElement('div');
                 div.className = 'flex justify-between items-center p-3 bg-[#FAF7F2] rounded-xl text-sm border border-[#D5C5B9]';
-                div.innerHTML = '<div><span class="font-bold">' + item.title + '</span><span class="text-xs text-gray-500 block">' + item.category + ' / ' + item.payment + '</span></div><div class="flex items-center gap-3"><span class="font-bold ' + (item.category === '💰 バイト収入' ? 'text-green-600' : '') + '">' + (item.category === '💰 バイト収入' ? '+' : '-') + item.amount.toLocaleString() + '円</span><button type="button" onclick="deleteMoney(' + item.id + ')" class="text-gray-400 hover:text-red-600 text-xs">✕</button></div>';
+                div.innerHTML = '<div><span class="font-bold">' + item.title + '</span><span class="text-xs text-gray-500 block">' + item.category + ' / ' + item.payment + '</span></div><div class="flex items-center gap-3"><span class="font-bold ' + (item.category === ' バイト収入' ? 'text-green-600' : '') + '">' + (item.category === ' バイト収入' ? '+' : '-') + item.amount.toLocaleString() + '円</span><button type="button" onclick="deleteMoney(' + item.id + ')" class="text-gray-400 hover:text-red-600 text-xs">✕</button></div>';
                 list.appendChild(div);
             });
 
@@ -973,7 +973,7 @@
             var fileInput = document.getElementById('g-file');
 
             var saveItem = function(imageUrl) {
-                goods.push({ id: Date.now(), name: name, category: category, status: '📦 予約・発送待ち', price: price, url: imageUrl });
+                goods.push({ id: Date.now(), name: name, category: category, status: ' 予約・発送待ち', price: price, url: imageUrl });
                 localStorage.setItem('goods', JSON.stringify(goods));
                 document.getElementById('goods-form').reset();
                 renderGoods();
@@ -1004,7 +1004,7 @@
             filtered.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'bg-[#FAF7F2] p-3 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-32 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Image\'"><div class="flex gap-1 flex-wrap mb-1"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.category + '</span><span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">📦 予約中</span></div><h4 class="font-bold text-sm mt-1">' + item.name + '</h4><p class="text-xs text-gray-600 mt-0.5">💰 ' + (item.price ? item.price.toLocaleString() + '円' : '金額未設定') + '</p></div><button type="button" onclick="deleteGoods(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-2 text-right">削除（届いた！）</button>';
+                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-32 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Image\'"><div class="flex gap-1 flex-wrap mb-1"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.category + '</span><span class="text-[10px] bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold"> 予約中</span></div><h4 class="font-bold text-sm mt-1">' + item.name + '</h4><p class="text-xs text-gray-600 mt-0.5"> ' + (item.price ? item.price.toLocaleString() + '円' : '金額未設定') + '</p></div><button type="button" onclick="deleteGoods(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-2 text-right">削除（届いた！）</button>';
                 grid.appendChild(div);
             });
         }
@@ -1043,7 +1043,7 @@
             tickets.slice().sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'bg-[#FAF7F2] p-4 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = '<div><div class="flex justify-between items-center mb-2"><span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">' + item.status + '</span><span class="text-xs text-gray-500 font-bold">📅 ' + item.date + '</span></div><h4 class="font-bold text-sm text-[#6E5750]">' + item.name + '</h4><p class="text-xs text-gray-600 mt-1">💰 費用: ' + (item.price ? item.price.toLocaleString() + '円' : '未設定') + '</p></div><button type="button" onclick="deleteTicket(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除</button>';
+                div.innerHTML = '<div><div class="flex justify-between items-center mb-2"><span class="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full font-bold">' + item.status + '</span><span class="text-xs text-gray-500 font-bold"> ' + item.date + '</span></div><h4 class="font-bold text-sm text-[#6E5750]">' + item.name + '</h4><p class="text-xs text-gray-600 mt-1"> 費用: ' + (item.price ? item.price.toLocaleString() + '円' : '未設定') + '</p></div><button type="button" onclick="deleteTicket(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除</button>';
                 grid.appendChild(div);
             });
         }
@@ -1082,10 +1082,10 @@
                 btns[i].classList.add('text-[#6E5750]');
             }
             if (genre === 'all' && document.getElementById('filter-all')) document.getElementById('filter-all').classList.add('filter-btn-active');
-            else if (genre === '🎰 ガチャガチャ' && document.getElementById('filter-gacha')) document.getElementById('filter-gacha').classList.add('filter-btn-active');
-            else if (genre === '🛍️ コスメ・日用品' && document.getElementById('filter-cosme')) document.getElementById('filter-cosme').classList.add('filter-btn-active');
-            else if (genre === '📚 本・文房具' && document.getElementById('filter-book')) document.getElementById('filter-book').classList.add('filter-btn-active');
-            else if (genre === '✨ その他' && document.getElementById('filter-other')) document.getElementById('filter-other').classList.add('filter-btn-active');
+            else if (genre === ' ガチャガチャ' && document.getElementById('filter-gacha')) document.getElementById('filter-gacha').classList.add('filter-btn-active');
+            else if (genre === ' コスメ・日用品' && document.getElementById('filter-cosme')) document.getElementById('filter-cosme').classList.add('filter-btn-active');
+            else if (genre === ' 本・文房具' && document.getElementById('filter-book')) document.getElementById('filter-book').classList.add('filter-btn-active');
+            else if (genre === ' その他' && document.getElementById('filter-other')) document.getElementById('filter-other').classList.add('filter-btn-active');
 
             renderGachas();
         }
@@ -1099,7 +1099,7 @@
             filtered.forEach(function(item) {
                 var div = document.createElement('div');
                 div.className = 'bg-[#FAF7F2] p-3 rounded-2xl border border-[#D5C5B9] flex flex-col justify-between';
-                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-28 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Gacha\'"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.genre + '</span><h4 class="font-bold text-xs sm:text-sm mt-1">' + item.name + '</h4><p class="text-[11px] text-gray-600 mt-1">💰 ' + (item.price ? item.price + '円' : '金額未設定') + '<br>📅 ' + (item.date || '予定なし') + '</p></div><button type="button" onclick="deleteGacha(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除・GET済</button>';
+                div.innerHTML = '<div><img src="' + item.url + '" class="w-full h-28 object-cover rounded-xl mb-2" onerror="this.src=\'https://via.placeholder.com/150?text=Gacha\'"><span class="text-[10px] bg-[#EFECE6] text-[#6E5750] px-2 py-0.5 rounded-full font-bold">' + item.genre + '</span><h4 class="font-bold text-xs sm:text-sm mt-1">' + item.name + '</h4><p class="text-[11px] text-gray-600 mt-1"> ' + (item.price ? item.price + '円' : '金額未設定') + '<br> ' + (item.date || '予定なし') + '</p></div><button type="button" onclick="deleteGacha(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 mt-3 text-right">削除・GET済</button>';
                 grid.appendChild(div);
             });
         }

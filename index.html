@@ -82,6 +82,33 @@
                     </div>
                 </div>
             </div>
+
+            <!-- バイトテンプレ管理カード -->
+            <div class="bg-white p-5 rounded-3xl shadow-sm border border-[#EFECE6] max-w-xl mx-auto space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-sm font-bold text-[#6E5750]">⚡ よく使うシフトテンプレ</h3>
+                    <button type="button" onclick="resetDefaultTemplates()" class="text-[11px] text-[#8C736A] underline hover:text-[#6E5750]">初期テンプレを復元</button>
+                </div>
+
+                <div id="shift-template-list" class="space-y-2"></div>
+
+                <form id="template-form" onsubmit="addShiftTemplate(event)" class="pt-3 border-t border-[#EFECE6] grid grid-cols-2 sm:grid-cols-5 gap-2">
+                    <input type="text" id="tpl-label" required placeholder="テンプレ名（例: 児童館午後）" class="col-span-2 sm:col-span-2 bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-3 py-2 text-xs">
+                    <select id="tpl-type" class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-2 py-2 text-xs">
+                        <option value="バイト（セリア）">セリア</option>
+                        <option value="バイト（児童館）">児童館</option>
+                    </select>
+                    <input type="time" id="tpl-start" required class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-2 py-2 text-xs">
+                    <input type="time" id="tpl-end" required class="bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-2 py-2 text-xs">
+                    <select id="tpl-break" class="col-span-2 sm:col-span-2 bg-[#FAF7F2] border border-[#D5C5B9] rounded-xl px-2 py-2 text-xs">
+                        <option value="0">休憩なし (0分)</option>
+                        <option value="30">休憩30分</option>
+                        <option value="45">休憩45分</option>
+                        <option value="60">休憩60分</option>
+                    </select>
+                    <button type="submit" class="col-span-2 sm:col-span-3 bg-[#6E5750] text-white font-bold py-2 rounded-xl hover:bg-[#58443E] transition text-xs">＋ テンプレを登録</button>
+                </form>
+            </div>
         </div>
 
         <!-- ================= 2. 家計簿（シフト給料連動つき） ================= -->
@@ -90,7 +117,6 @@
                 <div class="bg-white p-6 rounded-3xl shadow-sm border border-[#EFECE6] space-y-4">
                     <h3 class="font-bold text-[#6E5750]">🟢 メイン口座 ＆ 週予算</h3>
                     
-                    <!-- 🔗 バイト給料の自動連動表示 -->
                     <div class="flex justify-between items-center bg-[#F0F8F1] p-3 rounded-xl border border-green-200">
                         <div>
                             <span class="text-xs font-bold text-green-700 block">💼 バイト給料の自動連動</span>
@@ -338,6 +364,13 @@
                 <h3 class="text-lg font-bold text-[#6E5750]">💼 バイトシフトを追加</h3>
                 <button type="button" onclick="closeScheduleModal()" class="text-gray-400 hover:text-gray-600 font-bold text-xl px-2">✕</button>
             </div>
+
+            <!-- モーダル内テンプレ呼び出しバー -->
+            <div class="bg-[#FAF7F2] p-3 rounded-2xl border border-[#EFECE6] space-y-2">
+                <span class="text-[11px] font-bold text-[#8C736A] block">⚡ テンプレから自動入力</span>
+                <div id="modal-template-buttons" class="flex flex-wrap gap-1.5"></div>
+            </div>
+
             <form id="schedule-form" onsubmit="addSchedule(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-bold text-[#8C736A] mb-1">バイト先</label>
@@ -457,12 +490,26 @@
         var currentShiftDate = new Date();
         var selectedShiftDateStr = null;
 
+        var DEFAULT_TEMPLATES = [
+            { id: 'tpl-sun', label: 'セリア 日曜（9:30〜15:30 / 休30分）', type: 'バイト（セリア）', start: '09:30', end: '15:30', breakTime: 30 },
+            { id: 'tpl-fri', label: 'セリア 金曜（18:30〜21:30 / 休なし）', type: 'バイト（セリア）', start: '18:30', end: '21:30', breakTime: 0 }
+        ];
+
         var schedules = JSON.parse(localStorage.getItem('schedules')) || [];
         var tasks = JSON.parse(localStorage.getItem('tasks')) || [];
         var moneys = JSON.parse(localStorage.getItem('moneys')) || [];
         var goods = JSON.parse(localStorage.getItem('goods')) || [];
         var gachas = JSON.parse(localStorage.getItem('gachas')) || [];
         var tickets = JSON.parse(localStorage.getItem('tickets')) || [];
+        var shiftTemplates = JSON.parse(localStorage.getItem('shiftTemplates'));
+        if (!Array.isArray(shiftTemplates)) {
+            shiftTemplates = DEFAULT_TEMPLATES.slice();
+            localStorage.setItem('shiftTemplates', JSON.stringify(shiftTemplates));
+        }
+
+        function confirmDelete(message) {
+            return window.confirm(message || '本当に削除しますか？');
+        }
 
         function switchTab(tabId) {
             var contents = document.querySelectorAll('.tab-content');
@@ -492,6 +539,7 @@
             if (dateInput && !dateInput.value) {
                 dateInput.value = new Date().toISOString().split('T')[0];
             }
+            renderShiftTemplates();
             document.getElementById('schedule-modal').classList.remove('hidden');
         }
         function openScheduleModalWithDate() {
@@ -499,6 +547,7 @@
             if (dateInput && selectedShiftDateStr) {
                 dateInput.value = selectedShiftDateStr;
             }
+            renderShiftTemplates();
             document.getElementById('schedule-modal').classList.remove('hidden');
         }
         function closeScheduleModal() { document.getElementById('schedule-modal').classList.add('hidden'); }
@@ -541,6 +590,7 @@
                 if (document.getElementById('weekly-budget-limit')) document.getElementById('weekly-budget-limit').value = localStorage.getItem('weeklyLimit') || 10000;
                 
                 checkMonthlySavings();
+                renderShiftTemplates();
                 renderShiftCalendar();
                 renderTasks();
                 renderMoneys();
@@ -559,6 +609,117 @@
             if (document.getElementById('teiki-account')) localStorage.setItem('teikiAcc', document.getElementById('teiki-account').value);
             if (document.getElementById('nisa-account')) localStorage.setItem('nisaAcc', document.getElementById('nisa-account').value);
             renderMoneys();
+        }
+
+        // --- バイトテンプレ処理 ---
+        function saveShiftTemplates() {
+            localStorage.setItem('shiftTemplates', JSON.stringify(shiftTemplates));
+        }
+
+        function addShiftTemplate(e) {
+            e.preventDefault();
+            var label = document.getElementById('tpl-label').value.trim();
+            var type = document.getElementById('tpl-type').value;
+            var start = document.getElementById('tpl-start').value;
+            var end = document.getElementById('tpl-end').value;
+            var breakTime = parseInt(document.getElementById('tpl-break').value) || 0;
+            if (!label || !start || !end) return;
+
+            shiftTemplates.push({
+                id: 'tpl-' + Date.now(),
+                label: label,
+                type: type,
+                start: start,
+                end: end,
+                breakTime: breakTime
+            });
+            saveShiftTemplates();
+            document.getElementById('template-form').reset();
+            renderShiftTemplates();
+        }
+
+        function deleteShiftTemplate(id) {
+            var target = shiftTemplates.find(function(t) { return t.id === id; });
+            var name = target ? target.label : 'このテンプレ';
+            if (!confirmDelete('「' + name + '」を削除しますか？')) return;
+            shiftTemplates = shiftTemplates.filter(function(t) { return t.id !== id; });
+            saveShiftTemplates();
+            renderShiftTemplates();
+        }
+
+        function resetDefaultTemplates() {
+            if (!confirmDelete('初期テンプレ（セリア日曜・金曜）を復元しますか？')) return;
+            DEFAULT_TEMPLATES.forEach(function(def) {
+                var exists = shiftTemplates.some(function(t) { return t.id === def.id; });
+                if (!exists) {
+                    shiftTemplates.unshift(Object.assign({}, def));
+                }
+            });
+            saveShiftTemplates();
+            renderShiftTemplates();
+        }
+
+        function applyTemplateToModal(id) {
+            var tpl = shiftTemplates.find(function(t) { return t.id === id; });
+            if (!tpl) return;
+            if (document.getElementById('sch-type')) document.getElementById('sch-type').value = tpl.type;
+            if (document.getElementById('sch-start')) document.getElementById('sch-start').value = tpl.start;
+            if (document.getElementById('sch-end')) document.getElementById('sch-end').value = tpl.end;
+            if (document.getElementById('sch-break')) document.getElementById('sch-break').value = String(tpl.breakTime || 0);
+        }
+
+        function renderShiftTemplates() {
+            var listEl = document.getElementById('shift-template-list');
+            var modalBtnsEl = document.getElementById('modal-template-buttons');
+
+            if (listEl) {
+                listEl.innerHTML = '';
+                if (shiftTemplates.length === 0) {
+                    listEl.innerHTML = '<p class="text-xs text-gray-400 text-center py-2">テンプレはありません。下のフォームから追加できます。</p>';
+                } else {
+                    shiftTemplates.forEach(function(tpl) {
+                        var breakText = tpl.breakTime ? '休憩' + tpl.breakTime + '分' : '休憩なし';
+                        var row = document.createElement('div');
+                        row.className = 'flex justify-between items-center p-2.5 bg-[#FAF7F2] rounded-xl border border-[#EFECE6] text-xs gap-2';
+                        row.innerHTML =
+                            '<div class="min-w-0">' +
+                                '<span class="font-bold text-[#6E5750] block truncate">' + tpl.label + '</span>' +
+                                '<span class="text-[11px] text-gray-500">' + tpl.type + ' / ' + tpl.start + '〜' + tpl.end + ' / ' + breakText + '</span>' +
+                            '</div>' +
+                            '<div class="flex items-center gap-1.5 shrink-0">' +
+                                '<button type="button" onclick="openScheduleModalWithTemplate(\'' + tpl.id + '\')" class="bg-[#EFECE6] text-[#6E5750] font-bold px-2.5 py-1 rounded-lg hover:bg-[#E2DCD2]">使う</button>' +
+                                '<button type="button" onclick="deleteShiftTemplate(\'' + tpl.id + '\')" class="text-gray-400 hover:text-red-600 font-bold px-1.5 py-1">✕</button>' +
+                            '</div>';
+                        listEl.appendChild(row);
+                    });
+                }
+            }
+
+            if (modalBtnsEl) {
+                modalBtnsEl.innerHTML = '';
+                if (shiftTemplates.length === 0) {
+                    modalBtnsEl.innerHTML = '<span class="text-[11px] text-gray-400">登録済みのテンプレはありません</span>';
+                } else {
+                    shiftTemplates.forEach(function(tpl) {
+                        var btn = document.createElement('button');
+                        btn.type = 'button';
+                        btn.className = 'text-[11px] bg-white border border-[#D5C5B9] text-[#6E5750] font-bold px-2.5 py-1 rounded-lg hover:bg-[#EFECE6] transition';
+                        btn.innerText = tpl.label;
+                        btn.onclick = function() { applyTemplateToModal(tpl.id); };
+                        modalBtnsEl.appendChild(btn);
+                    });
+                }
+            }
+        }
+
+        function openScheduleModalWithTemplate(tplId) {
+            var dateInput = document.getElementById('sch-date');
+            if (dateInput) {
+                dateInput.value = selectedShiftDateStr || new Date().toISOString().split('T')[0];
+            }
+            renderShiftTemplates();
+            applyTemplateToModal(tplId);
+            document.getElementById('schedule-modal').classList.remove('hidden');
         }
 
         // --- シフト処理 ---
@@ -611,7 +772,6 @@
             }
         }
 
-        // 🔗 バイト給料の自動計算
         function getCurrentMonthWage() {
             var now = new Date();
             var ymPrefix = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0');
@@ -709,6 +869,7 @@
         }
 
         function deleteSchedule(id) {
+            if (!confirmDelete('このバイトシフトを削除しますか？')) return;
             schedules = schedules.filter(function(i) { return i.id !== id; });
             localStorage.setItem('schedules', JSON.stringify(schedules));
             renderShiftCalendar();
@@ -745,6 +906,7 @@
         }
 
         function deleteTask(id) {
+            if (!confirmDelete('この課題を完了/削除しますか？')) return;
             tasks = tasks.filter(function(i) { return i.id !== id; });
             localStorage.setItem('tasks', JSON.stringify(tasks));
             renderTasks();
@@ -775,11 +937,10 @@
                 }
                 var div = document.createElement('div');
                 div.className = 'flex justify-between items-center p-3 bg-[#FAF7F2] rounded-xl text-sm border border-[#D5C5B9]';
-                div.innerHTML = '<div><span class="font-bold">' + item.title + '</span><span class="text-xs text-gray-500 block">' + item.category + ' / ' + item.payment + '</span></div><div class="flex items-center gap-3"><span class="font-bold ' + (item.category === '💰 バイト収入' ? 'text-green-600' : '') + '">' + (item.category === '💰 バイト収入' ? '+' : '-') + item.amount.toLocaleString() + '円</span><button type="button" onclick="deleteMoney(' + item.id + ')" class="text-xs text-gray-400 hover:text-red-600 text-xs">✕</button></div>';
+                div.innerHTML = '<div><span class="font-bold">' + item.title + '</span><span class="text-xs text-gray-500 block">' + item.category + ' / ' + item.payment + '</span></div><div class="flex items-center gap-3"><span class="font-bold ' + (item.category === '💰 バイト収入' ? 'text-green-600' : '') + '">' + (item.category === '💰 バイト収入' ? '+' : '-') + item.amount.toLocaleString() + '円</span><button type="button" onclick="deleteMoney(' + item.id + ')" class="text-gray-400 hover:text-red-600 text-xs">✕</button></div>';
                 list.appendChild(div);
             });
 
-            // 🔗 連携されたバイト給料を表示
             var linkedWage = getCurrentMonthWage();
             if (document.getElementById('linked-wage-display')) {
                 document.getElementById('linked-wage-display').innerText = '¥ ' + linkedWage.toLocaleString();
@@ -796,6 +957,7 @@
         }
 
         function deleteMoney(id) {
+            if (!confirmDelete('この家計簿の記録を削除しますか？')) return;
             moneys = moneys.filter(function(i) { return i.id !== id; });
             localStorage.setItem('moneys', JSON.stringify(moneys));
             renderMoneys();
@@ -848,6 +1010,7 @@
         }
 
         function deleteGoods(id) {
+            if (!confirmDelete('このグッズをリストから削除しますか？')) return;
             goods = goods.filter(function(i) { return i.id !== id; });
             localStorage.setItem('goods', JSON.stringify(goods));
             renderGoods();
@@ -886,6 +1049,7 @@
         }
 
         function deleteTicket(id) {
+            if (!confirmDelete('このチケット・遠征予定を削除しますか？')) return;
             tickets = tickets.filter(function(i) { return i.id !== id; });
             localStorage.setItem('tickets', JSON.stringify(tickets));
             renderTickets();
@@ -941,6 +1105,7 @@
         }
 
         function deleteGacha(id) {
+            if (!confirmDelete('このアイテムを削除・GET済みにしますか？')) return;
             gachas = gachas.filter(function(i) { return i.id !== id; });
             localStorage.setItem('gachas', JSON.stringify(gachas));
             renderGachas();
